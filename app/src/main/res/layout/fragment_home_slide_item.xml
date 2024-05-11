@@ -1,0 +1,77 @@
+<!-- fragment_screen_slide_page.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_50">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        android:paddingBottom="20dp"
+        android:background="#CCFFFFFF"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_weight="0.5"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_sensor_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="3"
+                android:fontFamily="@font/quicksand_semibold"
+                android:text="TextView"
+                android:textColor="@color/blue_400"
+                android:textSize="23sp" />
+            <ImageButton
+                android:id="@+id/ibtn_sensor_wifi"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:foregroundGravity="center"
+                android:scaleType="fitCenter"
+                app:tint="@color/blue_100"
+                app:srcCompat="@drawable/ic_wifi_outline_icon_24dp" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            app:tint="@color/blue_100"
+            app:srcCompat="@drawable/ic_gas_tank_img" />
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Aproximadamente quedan 6 días de uso restantes"
+            android:textSize="30sp"
+            android:textColor="@color/blue_400"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="30dp"
+            android:fontFamily="@font/quicksand_regular"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/btn_add_sensor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:theme="@style/Button.Custom"
+            android:gravity="center"
+            android:insetLeft="30dp"
+            android:insetRight="30dp"
+            android:text="Registrar sensor" />
+    </LinearLayout>
+</LinearLayout>

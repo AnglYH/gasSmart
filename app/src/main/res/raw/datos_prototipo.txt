@@ -1,0 +1,51 @@
+Datos del Prototipo
+
+Colores
+ * black: #FF000000
+ * white: #FFFFFF
+ * boton: #00A8E8 (color para los botones)
+ * edit_text: #D9D9D9 (color para los inputs)
+
+Fuentes de letra
+ * quicksand_bold
+ * quicksand_light
+ * quicksand_medium
+ * quicksand_regular
+ * quicksand_semibold
+
+Imágenes
+ * balon (interfaz - Detalle Sensor)
+ * check (interfaz - Vinculado01)
+ * flecha01 (interfaz - Vinculado02)
+ * flecha02 (interfaz - Home-usuario y Sensor01)
+ * logo01 (todas las interfaces)
+ * logo02 (casi todas las interfaces)
+ * mas (interfaz - Home-usuario)
+ * wifi01 (interfaz - Detalle Sensor y Vinculado02)
+ * wifi02 (interfaz - Sensor02)
+ * wifi03 (interfaz - Sensor01)
+
+Texto (Label - TextView)
+ * Ancho (width): wrap_content
+ * Alto (height): wrap_content
+ * Fuente de letra: regular (para títulos y subtítulos)
+ * Color de letra: black #000000
+ * Tamaño de letra: 24sp (para títulos) y 14sp (para subtítulos)
+
+Edit (input - EditText)
+ * Ancho (width): 180dp
+ * Alto (height): 40dp
+ * Color de fondo: #D9D9D9
+ * Relleno (padding): 10dp
+ * Borde (radius): 10dp 
+
+Botón
+ * Ancho (width): wrap_content
+ * Alto (height): wrap_content
+ * Color de fondo: #00A8E8
+ * Color de letra: white #FFFFFF
+ * Fuente de letra: regular
+ * Borde (radius): 10dp
+ * Texto en Mayúsculas (textAllCaps): false
+ * Tamaño de letra: 14sp
+

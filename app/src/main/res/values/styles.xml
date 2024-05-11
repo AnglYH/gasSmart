@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppSpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:fontFamily">@font/quicksand_semibold</item> <!-- Cambia "sans-serif-medium" por el tipo de fuente deseado -->
+        <item name="android:background">@drawable/spinner_background</item>
+        <item name="android:popupBackground">#FFFFFF</item> <!-- Cambia el color de fondo del desplegable si lo necesitas -->
+        <item name="android:dropDownVerticalOffset">0dp</item>
+    </style>
+    <style name="CustomSpinnerTextStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:fontFamily">@font/quicksand_regular</item>
+    </style>
+</resources>

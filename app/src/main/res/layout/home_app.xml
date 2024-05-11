@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity">
+
+    <ImageView
+        android:id="@+id/img_home_logo"
+        android:layout_width="110dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo02" />
+
+    <TextView
+        android:id="@+id/lbl_home_titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="136dp"
+        android:fontFamily="@font/quicksand_regular"
+        android:text="Sensores"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/img_home_mas"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="56dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mas" />
+
+    <TextView
+        android:id="@+id/lbl_home_subtitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="40dp"
+        android:text="Agregar un nuevo sensor"
+        android:fontFamily="@font/quicksand_regular"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbl_home_titulo" />
+
+    <ImageView
+        android:id="@+id/img_home_flecha"
+        android:layout_width="45dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="192dp"
+        app:layout_constraintStart_toEndOf="@+id/lbl_home_subtitulo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/flecha02" />
+
+    <ImageView
+        android:id="@+id/img_home_ss"
+        android:layout_width="36dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/logo01" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

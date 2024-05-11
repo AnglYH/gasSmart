@@ -1,0 +1,50 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="5dp"
+    android:layout_marginHorizontal="30dp"
+    app:cardCornerRadius="20dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Ingrese el código de su sensor"
+            android:textSize="16sp"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/quicksand_regular" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_sensor_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingVertical="4dp"
+                android:fontFamily="@font/quicksand_regular"
+                android:background="@drawable/input_background"
+                android:hint="Ejem: AQ52" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_register_sensor"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:theme="@style/Button.Custom"
+            android:text="Agregar"
+            android:textColor="@color/white">
+        </Button>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

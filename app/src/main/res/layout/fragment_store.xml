@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_50"
+    tools:context=".ui.fragment.StoreFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="20dp"
+        android:background="#CCFFFFFF"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:layout_marginBottom="30dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_semibold"
+            android:gravity="center_vertical"
+            android:paddingVertical="10dp"
+            android:text="Registra tu balón"
+            android:textColor="@color/blue_400"
+            android:textSize="23sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="8"
+            android:dividerPadding="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/quicksand_regular"
+                android:textColor="@color/black"
+                android:text="Dirección"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="3dp"
+                android:textSize="16sp"
+                android:background="@drawable/input_background" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/quicksand_regular"
+                android:text="Tipo de válvula"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="3dp"
+                android:textSize="16sp"
+                android:background="@drawable/spinner_background"
+                android:entries="@array/tipos_valvula_disponibles" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/quicksand_regular"
+                android:text="Empresa"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spinner3"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="3dp"
+                android:textSize="16sp"
+                android:background="@drawable/spinner_background"
+                android:entries="@array/marcas_disponibles" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="194dp"
+                android:background="@color/transparent" />
+
+            <Button
+                android:id="@+id/btn_add_tank"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:theme="@style/Button.Custom"
+                android:gravity="center"
+                android:insetLeft="10dp"
+                android:insetRight="10dp"
+                android:text="Realizar pedido" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
