@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.miempresa.gasapp.databinding.FragmentStoreBinding
+import android.content.Intent
+import com.miempresa.gasapp.ui.activity.MapActivity
 
 class StoreFragment : Fragment() {
     private var _binding: FragmentStoreBinding? = null
@@ -25,4 +27,13 @@ class StoreFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnAddTank.setOnClickListener {
+            val intent = Intent(activity, MapActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
 }
