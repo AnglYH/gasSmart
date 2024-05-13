@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,8 @@ import com.miempresa.gasapp.Database.GasTankDatabase
 import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.model.GasTank
+import com.miempresa.gasapp.ui.dialog.AyudaRegistroBalonDialogFragment
+import com.miempresa.gasapp.ui.dialog.AyudaWifiDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -28,6 +31,7 @@ class RegisterTankActivity : AppCompatActivity() {
     private lateinit var spin2: Spinner
     private lateinit var spin3: Spinner
     private lateinit var btnAddGasTank: Button
+    private lateinit var btn_tank_register : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +74,13 @@ class RegisterTankActivity : AppCompatActivity() {
             )
             agregarBalon(gasTank)
             mostrarBalones()
+        }
+
+        val btn_tank_register = findViewById<ImageView>(R.id.iv_tank_register)
+
+        btn_tank_register.setOnClickListener {
+            val dialog = AyudaRegistroBalonDialogFragment()
+            dialog.show(supportFragmentManager, "dialog_wifi")
         }
 
     }
