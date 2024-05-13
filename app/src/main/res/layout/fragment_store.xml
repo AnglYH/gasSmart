@@ -107,7 +107,7 @@
                 android:gravity="center"
                 android:insetLeft="10dp"
                 android:insetRight="10dp"
-                android:text="Realizar pedido" />
+                android:text="Elegir Distribuidor" />
         </LinearLayout>
 
     </LinearLayout>
