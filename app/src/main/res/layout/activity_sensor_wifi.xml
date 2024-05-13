@@ -29,14 +29,29 @@
             android:textColor="@color/blue_400"
             android:textSize="23sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Redes disponibles"
-            android:textSize="20sp"
-            android:fontFamily="@font/quicksand_semibold"
-            android:textColor="@color/blue_400"
-            android:layout_marginTop="30dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp">
+>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Redes disponibles"
+                android:textSize="20sp"
+                android:fontFamily="@font/quicksand_semibold"
+                android:textColor="@color/blue_400" />
+
+            <ImageView
+                android:id="@+id/iv_question"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/question"
+                android:layout_marginLeft="20dp"/>
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
