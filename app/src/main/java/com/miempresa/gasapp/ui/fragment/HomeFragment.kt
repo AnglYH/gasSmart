@@ -9,6 +9,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.miempresa.gasapp.adapter.ScreenSlidePagerAdapter
 import com.miempresa.gasapp.databinding.FragmentHomeBinding
 import com.miempresa.gasapp.model.Sensor
+import com.miempresa.gasapp.ui.dialog.PromocionesDialogFragment
 
 
 class HomeFragment : Fragment() {
@@ -45,6 +46,11 @@ class HomeFragment : Fragment() {
         }.attach()
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        PromocionesDialogFragment().show(childFragmentManager, "PromocionesDialog")
     }
     override fun onDestroyView() {
         super.onDestroyView()
