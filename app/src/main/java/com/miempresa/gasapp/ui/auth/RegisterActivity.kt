@@ -29,6 +29,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var textViewPassword: TextView
     private lateinit var textViewConfirmPassword: TextView
     private lateinit var textViewPhone: TextView
+    private lateinit var textViewLogin: TextView
 
     private lateinit var db: UserDatabase
     private lateinit var userDao: UserDao
@@ -51,6 +52,7 @@ class RegisterActivity : AppCompatActivity() {
         textViewPassword = findViewById(R.id.lbl_contraseña)
         textViewConfirmPassword = findViewById(R.id.lbl_password_check)
         textViewPhone = findViewById(R.id.lbl_phone)
+        textViewLogin = findViewById(R.id.lbl_login)
 
         // Add TextChangedListener to EditText fields to validate and update colors
         editTextEmail.addTextChangedListener(createTextWatcher(editTextEmail, textViewEmail))
@@ -91,6 +93,11 @@ class RegisterActivity : AppCompatActivity() {
                 // If not valid, show error message
                 Toast.makeText(this, "Por favor, completa correctamente todos los campos", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // Add OnClickListener to the login text
+        textViewLogin.setOnClickListener {
+            startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
         }
     }
 
