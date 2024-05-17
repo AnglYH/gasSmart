@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.Database.UserDatabase
 import com.miempresa.gasapp.MainActivity
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var db: UserDatabase
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    @OptIn(DelicateCoroutinesApi::class)
+    public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_user)
 

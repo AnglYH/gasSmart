@@ -50,7 +50,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.activity)
-    implementation("com.google.android.gms:play-services-maps:18.0.0") // esta es la dependencia de google maps
+    implementation("com.google.android.gms:play-services-maps:18.0.0")  // esta es la dependencia de google maps
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,5 +62,4 @@ dependencies {
 
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
-
 }
