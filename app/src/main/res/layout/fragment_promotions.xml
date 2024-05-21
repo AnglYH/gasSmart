@@ -1,0 +1,267 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.PromotionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/promotionsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Promociones"
+                android:textColor="@color/black"
+                android:drawableLeft="@drawable/icon_promociones_resized"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:id="@+id/rewardsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recompensas"
+                android:textColor="@color/black"
+                android:drawableLeft="@drawable/ic_recompensas_resized"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Empresas"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/quicksand_regular"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProm1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardBackgroundColor="@color/white"
+            card_view:cardUseCompatPadding="true"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:id="@+id/promotions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/empresa1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/solgas" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="15dp">
+
+                    <TextView
+                        android:id="@+id/promocion1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20% De Descuento"
+                        android:fontFamily="@font/quicksand_regular"
+                        android:textColor="@color/naranja_500"
+                        android:layout_marginTop="5dp"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desprom1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Obtén un 25% de descuento en todos nuestros productos."
+                        android:textSize="13dp"
+                        android:layout_marginRight="20dp" />
+
+                    <TextView
+                        android:id="@+id/expiry1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Expira: 15/05/2024"
+                        android:textSize="13dp"
+                        android:layout_marginTop="10dp" />
+
+                    <TextView
+                        android:id="@+id/price1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Precio: S/. 40.00"
+                        android:textSize="13dp"
+                        android:layout_marginTop="5dp" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProm2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardBackgroundColor="@color/white"
+            card_view:cardUseCompatPadding="true"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/empresa2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/llamagas" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="15dp">
+
+                    <TextView
+                        android:id="@+id/promocion2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25% De Descuento"
+                        android:fontFamily="@font/quicksand_regular"
+                        android:textColor="@color/naranja_500"
+                        android:layout_marginTop="5dp"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desprom2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Obtén un 25% de descuento en todos nuestros productos."
+                        android:textSize="13dp"
+                        android:layout_marginRight="20dp" />
+
+                    <TextView
+                        android:id="@+id/expiry2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Expira: 14/05/2024"
+                        android:textSize="13dp"
+                        android:layout_marginTop="10dp" />
+
+                    <TextView
+                        android:id="@+id/price2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Precio: S/. 37.50"
+                        android:textSize="13dp"
+                        android:layout_marginTop="5dp" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProm3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardBackgroundColor="@color/white"
+            card_view:cardUseCompatPadding="true"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/empresa3"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/newgas" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="15dp">
+
+                    <TextView
+                        android:id="@+id/promocion3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30% De Descuento"
+                        android:fontFamily="@font/quicksand_regular"
+                        android:textColor="@color/naranja_500"
+                        android:layout_marginTop="5dp"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desprom3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Obtén un 25% de descuento en todos nuestros productos."
+                        android:textSize="13dp"
+                        android:layout_marginRight="20dp" />
+
+                    <TextView
+                        android:id="@+id/expiry3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Expira: 13/05/2024"
+                        android:textSize="13dp"
+                        android:layout_marginTop="10dp" />
+
+                    <TextView
+                        android:id="@+id/price3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Precio: S/. 35.00"
+                        android:textSize="13dp"
+                        android:layout_marginTop="5dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>

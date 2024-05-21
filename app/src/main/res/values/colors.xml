@@ -5,6 +5,7 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="naranja_500">#FF9800</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
@@ -18,5 +19,6 @@
 
     <color name="transparent">#00D9D9D9</color>
     <color name="edit_text">#D9D9D9</color>
+    <color name="red">#BA3737</color>
 
 </resources>
