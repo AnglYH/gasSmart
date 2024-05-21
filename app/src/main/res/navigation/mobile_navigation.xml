@@ -29,4 +29,9 @@
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />
 
+    <fragment
+        android:id="@+id/navigation_promotions"
+        android:name="com.miempresa.gasapp.ui.fragment.PromotionFragment"
+        android:label="Promociones"
+        tools:layout="@layout/fragment_promotions" />
 </navigation>

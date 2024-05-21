@@ -28,104 +28,49 @@
             android:text="Conecte su sensor a una red wifi"
             android:textColor="@color/blue_400"
             android:textSize="23sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp">
+>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Redes disponibles"
+                android:textSize="20sp"
+                android:fontFamily="@font/quicksand_semibold"
+                android:textColor="@color/blue_400" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Redes disponibles"
-            android:textSize="20sp"
-            android:fontFamily="@font/quicksand_semibold"
-            android:textColor="@color/blue_400"
-            android:layout_marginTop="30dp" />
-
+            <ImageView
+                android:id="@+id/iv_question"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/question"
+                android:layout_marginLeft="20dp"/>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="8"
             android:orientation="vertical">
-            <LinearLayout
-                android:id="@+id/ll_wifi_1"
+
+            <ListView
+                android:id="@+id/lv_wifi"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
+                android:layout_height="350dp"
+                android:layout_weight="1"
                 android:layout_marginTop="20dp"
-                android:paddingHorizontal="20dp"
-                android:background="@drawable/wifi_background"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true">
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/quicksand_regular"
-                    android:text="Red 1"
-                    android:textColor="@color/blue_400"
-                    android:textSize="18sp" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/wifi01" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="20dp"
-                android:background="@drawable/wifi_background"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/quicksand_regular"
-                    android:text="Red 2"
-                    android:textColor="@color/blue_400"
-                    android:textSize="18sp" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/wifi01" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="20dp"
-                android:background="@drawable/wifi_background"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/quicksand_regular"
-                    android:text="Red 3"
-                    android:textColor="@color/blue_400"
-                    android:textSize="18sp" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/wifi01" />
-            </LinearLayout>
+                android:paddingBottom="10dp" />
 
-            <View
-                android:id="@+id/divider2"
+            <Button
+                android:id="@+id/btn_search_wifi"
                 android:layout_width="match_parent"
-                android:layout_height="194dp"
-                android:background="@color/transparent" />
-
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:text="Buscar redes"
+                android:layout_gravity="bottom"
+                android:theme="@style/Button.Custom"/>
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>

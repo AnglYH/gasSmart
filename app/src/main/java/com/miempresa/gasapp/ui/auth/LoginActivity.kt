@@ -1,27 +1,73 @@
 package com.miempresa.gasapp.ui.auth
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
-import com.miempresa.gasapp.MainActivity
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.miempresa.gasapp.R
-import com.miempresa.gasapp.ui.fragment.HomeFragment
+import com.miempresa.gasapp.Database.UserDatabase
+import com.miempresa.gasapp.MainActivity
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private lateinit var editTextUsername: EditText
+    private lateinit var editTextPassword: EditText
+    private lateinit var db: UserDatabase
+
+    @OptIn(DelicateCoroutinesApi::class)
+    public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_user)
-        val boton = findViewById<Button>(R.id.btn_login)
-        boton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+
+        db = UserDatabase.getInstance(this)
+
+        editTextUsername = findViewById(R.id.ipt_login_mail)
+        editTextPassword = findViewById(R.id.ipt_login_password)
+        val buttonLogin = findViewById<Button>(R.id.btn_login)
+        val textViewRegister = findViewById<TextView>(R.id.lbl_register)
+
+        buttonLogin.setOnClickListener {
+            val email = editTextUsername.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            GlobalScope.launch(Dispatchers.IO) {
+                val user = db.userDao().getUserByEmail(email)
+
+                if (user != null) {
+                    if (user.password == password) {
+                        // Credenciales válidas, iniciar sesión
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        // Contraseña incorrecta
+                        runOnUiThread {
+                            Toast.makeText(this@LoginActivity, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    // Usuario no encontrado
+                    runOnUiThread {
+                        Toast.makeText(this@LoginActivity, "El usuario no existe, regístrate por favor", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
-        val text = findViewById<TextView>(R.id.lbl_register)
-        text.setOnClickListener{
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+
+        textViewRegister.setOnClickListener {
+            startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
         }
     }
 }
+
+
