@@ -13,7 +13,7 @@ class ScreenSlidePagerAdapter(fa: HomeFragment, private val sensorList: List<Sen
     override fun createFragment(position: Int): Fragment {
         return ScreenSlidePageFragment().apply {
             arguments = Bundle().apply {
-                putParcelable("sensor", sensorList[position])
+                putSerializable("sensor", sensorList[position])
             }
         }
     }

@@ -1,10 +1,11 @@
 package com.miempresa.gasapp.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-@Parcelize
 data class Sensor(
-    val id: Int,
-    val code: String,
-) : Parcelable
+    @SerializedName("id") val idSensor: Int,
+    @SerializedName("nombre") val code: String,
+    @SerializedName("id_balon") val idGasTank: Int,
+    @SerializedName("id_usuario") val idUser: Int
+) : Serializable
