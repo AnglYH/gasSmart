@@ -4,29 +4,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.miempresa.gasapp.databinding.FragmentHomeSlideItemBinding
 import com.miempresa.gasapp.model.Sensor
-import com.miempresa.gasapp.network.ApiClient
-import com.miempresa.gasapp.network.ApiService
 import com.miempresa.gasapp.ui.dialog.RegisterSensorDialogFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
+import androidx.lifecycle.Observer
 
+@Suppress("DEPRECATION")
 class ScreenSlidePageFragment : Fragment() {
     private var sensor: Sensor? = null
-    private val sensorList = mutableListOf<Sensor>()
     private var _binding: FragmentHomeSlideItemBinding? = null
+    private lateinit var viewModel: SensorViewModel
+
     private val binding get() = _binding!!
 
-    private val apiService: ApiService by lazy {
-        ApiClient.getClient().create(ApiService::class.java)
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sensor = arguments?.getSerializable("sensor") as Sensor?    }
+        sensor = arguments?.getSerializable("sensor") as Sensor?
+        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
 
+        // Observa los cambios en idSensor
+        viewModel.idSensor.observe(this, Observer { idSensor ->
+            // Carga los datos del sensor
+            viewModel.loadSensorData(idSensor)
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Inicia el polling de los datos del sensor
+        sensor?.let {
+            viewModel.startPollingSensorData(it.idSensor.toString())
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,35 +46,19 @@ class ScreenSlidePageFragment : Fragment() {
         _binding = FragmentHomeSlideItemBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Usa el ID del sensor que este fragmento representa
-        val idSensor = sensor?.idSensor.toString()
-        CoroutineScope(Dispatchers.IO).launch {
-            val responseLecturas = apiService.obtenerLecturasPorSensor(idSensor)
-            val responseSensores = apiService.obtenerSensores()
+        // Observa los cambios en sensorData
+        viewModel.sensorData.observe(viewLifecycleOwner, Observer { data ->
+            val (sensor, lectura) = data
+            binding.tvSensorCode.text = "Sensor ${sensor?.code}"
+            binding.tvRemainingDays.text = "Días restantes: ${lectura?.diasRest}"
+            binding.tvDate.text = "Fecha: ${lectura?.fecha}"
+            binding.tvPercentage.text = "Porcentaje: ${lectura?.porcentaje}%"
+        })
 
-            if (responseLecturas.isSuccessful && responseSensores.isSuccessful) {
-                val lecturaList = responseLecturas.body()
-                val sensorList = responseSensores.body()
-
-                // Asegúrate de que la lista de lecturas y sensores no estén vacías
-                if (!lecturaList.isNullOrEmpty() && !sensorList.isNullOrEmpty()) {
-                    // Ordena las lecturas por fecha en orden descendente y selecciona la primera
-                    val lectura = lecturaList.maxByOrNull { it.fecha }!!
-
-                    // Busca el sensor con el idSensor correspondiente
-                    val sensor = sensorList.find { it.idSensor == lectura.idSensor }
-
-                    // Actualiza tvSensorCode en el hilo principal
-                    withContext(Dispatchers.Main) {
-                        binding.tvSensorCode.text = "Sensor ${sensor?.code}"
-                        binding.tvRemainingDays.text = "Días restantes: ${lectura.diasRest}"
-                        binding.tvDate.text = "Fecha: ${lectura.fecha}"
-                        binding.tvPercentage.text = "Porcentaje: ${lectura.porcentaje}%"
-                    }
-                }
-            } else {
-                // Maneja el error
-            }
+        binding.btnAddSensor.setOnClickListener {
+            // Muestra el diálogo de registro de sensor
+            val dialog = RegisterSensorDialogFragment()
+            dialog.show(parentFragmentManager, "RegisterSensorDialogFragment")
         }
 
         /*sensor?.let {
@@ -96,5 +91,9 @@ class ScreenSlidePageFragment : Fragment() {
         //}
 
         return root
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
