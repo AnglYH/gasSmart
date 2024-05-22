@@ -1,6 +1,7 @@
 package com.miempresa.gasapp.ui.fragment
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,14 @@ import com.miempresa.gasapp.ui.activity.RegisterTankActivity
 import com.miempresa.gasapp.ui.activity.SensorWifiActivity
 import com.miempresa.gasapp.ui.dialog.RegisterSensorDialogFragment
 
-class ScreenSlidePageFragment(private val sensor: Sensor) : Fragment() {
+class ScreenSlidePageFragment : Fragment() {
+    private var sensor: Sensor? = null
     private var _binding: FragmentHomeSlideItemBinding? = null
     private val binding get() = _binding!!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sensor = arguments?.getParcelable<Parcelable>("sensor") as Sensor?    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,7 +31,12 @@ class ScreenSlidePageFragment(private val sensor: Sensor) : Fragment() {
         _binding = FragmentHomeSlideItemBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.tvSensorCode.text =  "Sensor ${sensor.code}"
+        sensor?.let {
+            binding.tvSensorCode.text =  "Sensor ${it.code}"
+        } ?: run {
+            // Handle the case where sensor is null
+
+        }
 
         binding.btnAddSensor.setOnClickListener {
             val dialog = RegisterSensorDialogFragment()
@@ -39,7 +50,5 @@ class ScreenSlidePageFragment(private val sensor: Sensor) : Fragment() {
         //}
 
         return root
-
     }
-
 }

@@ -39,8 +39,7 @@
                 android:background="@android:color/transparent"
                 android:foregroundGravity="center"
                 android:scaleType="fitCenter"
-                app:tint="@color/blue_100"
-                app:srcCompat="@drawable/ic_wifi_outline_icon_24dp" />
+                app:srcCompat="@drawable/ic_wifi_on_24dp" />
         </LinearLayout>
         <ImageView
             android:id="@+id/imageView"
