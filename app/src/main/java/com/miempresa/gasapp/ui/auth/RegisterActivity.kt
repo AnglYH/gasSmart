@@ -1,92 +1,80 @@
 package com.miempresa.gasapp.ui.auth
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.miempresa.gasapp.DAO.UserDao
-import com.miempresa.gasapp.Database.UserDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
+import com.miempresa.gasapp.databinding.ActivityRegisterUserBinding
 import com.miempresa.gasapp.model.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
-class RegisterActivity : AppCompatActivity() {
-    private lateinit var editTextEmail: EditText
-    private lateinit var editTextPassword: EditText
-    private lateinit var editTextConfirmPassword: EditText
-    private lateinit var editTextPhone: EditText
-    private lateinit var buttonRegister: Button
-    private lateinit var textViewEmail: TextView
-    private lateinit var textViewPassword: TextView
-    private lateinit var textViewConfirmPassword: TextView
-    private lateinit var textViewPhone: TextView
-    private lateinit var textViewLogin: TextView
+enum class ProviderType {
+    BASIC
+}
 
-    private lateinit var db: UserDatabase
-    private lateinit var userDao: UserDao
+class RegisterActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityRegisterUserBinding
+    private val database = Firebase.database
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.register_user)
-
-        // Initialize database and DAO
-        db = UserDatabase.getInstance(applicationContext)
-        userDao = db.userDao()
-
-        // Find views by their IDs
-        editTextEmail = findViewById(R.id.ipt_register_mail)
-        editTextPassword = findViewById(R.id.ipt_register_password)
-        editTextConfirmPassword = findViewById(R.id.ipt_register_password_check)
-        editTextPhone = findViewById(R.id.ipt_register_phone)
-        buttonRegister = findViewById(R.id.btn_register)
-        textViewEmail = findViewById(R.id.lbl_mail)
-        textViewPassword = findViewById(R.id.lbl_contraseña)
-        textViewConfirmPassword = findViewById(R.id.lbl_password_check)
-        textViewPhone = findViewById(R.id.lbl_phone)
-        textViewLogin = findViewById(R.id.lbl_login)
+        binding = ActivityRegisterUserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Add TextChangedListener to EditText fields to validate and update colors
-        editTextEmail.addTextChangedListener(createTextWatcher(editTextEmail, textViewEmail))
-        editTextPassword.addTextChangedListener(createTextWatcher(editTextPassword, textViewPassword))
-        editTextConfirmPassword.addTextChangedListener(createTextWatcher(editTextConfirmPassword, textViewConfirmPassword))
-        editTextPhone.addTextChangedListener(createTextWatcher(editTextPhone, textViewPhone))
+        binding.etRegisterMail.addTextChangedListener(createTextWatcher(binding.etRegisterMail, binding.lblMail))
+        binding.etRegisterPassword.addTextChangedListener(createTextWatcher(binding.etRegisterPassword, binding.lblRegisterPassword))
+        binding.etRegisterPasswordCheck.addTextChangedListener(createTextWatcher(binding.etRegisterPasswordCheck, binding.lblPasswordCheck))
+        binding.etRegisterPhone.addTextChangedListener(createTextWatcher(binding.etRegisterPhone, binding.lblPhone))
 
-        // Add OnClickListener to the register button
-        buttonRegister.setOnClickListener {
-            val email = editTextEmail.text.toString().trim()
-            val password = editTextPassword.text.toString().trim()
-            val confirmPassword = editTextConfirmPassword.text.toString().trim()
-            val phone = editTextPhone.text.toString().trim()
+        setup()
+    }
+
+    private fun setup() {
+        title = "Registro de usuario"
+
+        binding.btnRegister.setOnClickListener {
+            val email = binding.etRegisterMail.text.toString().trim()
+            val password = binding.etRegisterPassword.text.toString().trim()
+            val confirmPassword = binding.etRegisterPasswordCheck.text.toString().trim()
+            val phone = binding.etRegisterPhone.text.toString().trim()
 
             // Validate email, password, and phone
             if (isValidEmail(email) && isValidPassword(password) && password == confirmPassword && isValidPhone(phone)) {
-                // Check if email already exists
-                GlobalScope.launch(Dispatchers.IO) {
-                    val existingUser = userDao.getUserByEmail(email)
-                    if (existingUser != null) {
-                        // Email already exists, show error message
-                        runOnUiThread {
-                            Toast.makeText(this@RegisterActivity, "El correo electrónico ya está registrado", Toast.LENGTH_SHORT).show()
+                // Generate unique ID for the user
+                val userId = database.getReference("users").push().key
+
+                // Create User object
+                val user = User(id = userId, password = password, phone = phone)
+
+                // Register user with Firebase
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Save user in Firebase database
+                        database.getReference("users").child(email.replace(".", ",")).setValue(user).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // Show registration successful message
+                                Toast.makeText(this, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
+                                // Start main activity
+                                showMainActivity(email, ProviderType.BASIC)
+                            } else {
+                                // Show error message
+                                showAlert()
+                            }
                         }
                     } else {
-                        // Email does not exist, proceed with registration
-                        userDao.insert(User(email = email, password = password, phone = phone))
-                        // Show registration successful message
-                        runOnUiThread {
-                            Toast.makeText(this@RegisterActivity, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
-                            // Start main activity or any other activity
-                            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-                            startActivity(intent)
-                        }
+                        // Show error message
+                        showAlert()
                     }
                 }
             } else {
@@ -96,9 +84,18 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         // Add OnClickListener to the login text
-        textViewLogin.setOnClickListener {
+        binding.lblLogin.setOnClickListener {
             startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
         }
+    }
+
+    private fun showMainActivity(email: String, provider: ProviderType) {
+        val mainIntent = Intent(this, MainActivity::class.java).apply {
+            putExtra("email", email)
+            putExtra("provider", provider.name)
+            putExtra("phone", binding.etRegisterPhone.text.toString().trim())
+        }
+        startActivity(mainIntent)
     }
 
     // Function to create TextWatcher for EditText fields
@@ -112,7 +109,7 @@ class RegisterActivity : AppCompatActivity() {
                 val text = s.toString().trim()
                 // Validate and update color of EditText field
                 when (editText) {
-                    editTextEmail -> {
+                    binding.etRegisterMail -> {
                         if (!isValidEmail(text)) {
                             editText.setBackgroundResource(R.drawable.input_background_red)
                             textView.setTextColor(resources.getColor(R.color.red)) // Cambiar color del TextView
@@ -121,7 +118,7 @@ class RegisterActivity : AppCompatActivity() {
                             textView.setTextColor(resources.getColor(R.color.black)) // Restaurar color del TextView
                         }
                     }
-                    editTextPassword -> {
+                    binding.etRegisterPassword -> {
                         if (!isValidPassword(text)) {
                             editText.setBackgroundResource(R.drawable.input_background_red)
                             textView.setTextColor(resources.getColor(R.color.red)) // Cambiar color del TextView
@@ -130,8 +127,8 @@ class RegisterActivity : AppCompatActivity() {
                             textView.setTextColor(resources.getColor(R.color.black)) // Restaurar color del TextView
                         }
                     }
-                    editTextConfirmPassword -> {
-                        val password = editTextPassword.text.toString().trim()
+                    binding.etRegisterPasswordCheck -> {
+                        val password = binding.etRegisterPassword.text.toString().trim()
                         if (text != password) {
                             editText.setBackgroundResource(R.drawable.input_background_red)
                             textView.setTextColor(resources.getColor(R.color.red)) // Cambiar color del TextView
@@ -140,7 +137,7 @@ class RegisterActivity : AppCompatActivity() {
                             textView.setTextColor(resources.getColor(R.color.black)) // Restaurar color del TextView
                         }
                     }
-                    editTextPhone -> {
+                    binding.etRegisterPhone -> {
                         if (!isValidPhone(text)) {
                             editText.setBackgroundResource(R.drawable.input_background_red)
                             textView.setTextColor(resources.getColor(R.color.red)) // Cambiar color del TextView
@@ -169,6 +166,13 @@ class RegisterActivity : AppCompatActivity() {
     private fun isValidPhone(phone: String): Boolean {
         return phone.length == 9 && phone.matches(Regex("\\d+"))
     }
+
+    private fun showAlert() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Error")
+        builder.setMessage("Se ha producido un error registrando el usuario")
+        builder.setPositiveButton("Aceptar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
 }
-
-

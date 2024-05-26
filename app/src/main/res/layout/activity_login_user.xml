@@ -9,47 +9,54 @@
 
     <ImageView
         android:id="@+id/img_login_logo"
-        android:layout_width="285dp"
-        android:layout_height="159dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,16:9"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.07"
+        app:layout_constraintWidth_percent="0.8"
         app:srcCompat="@drawable/logo03" />
 
     <TextView
         android:id="@+id/lbl_login_tagline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:fontFamily="@font/quicksand_regular"
         android:text="Siempre seguro, siempre ahora"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_login_logo"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_bias="0.5"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="338dp"
-        android:layout_height="365dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/auth_form_background"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:paddingTop="20dp"
+        android:paddingHorizontal="25dp"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_login_logo"
-        app:layout_constraintVertical_bias="0.408">
+        app:layout_constraintTop_toBottomOf="@+id/lbl_login_tagline"
+        app:layout_constraintVertical_bias="0.5">
 
         <TextView
-            android:layout_width="291dp"
-            android:layout_height="33dp"
-            android:layout_margin="20dp"
-            android:layout_marginTop="10dp"
+            android:id="@+id/lbl_login_form"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_semibold"
             android:foregroundGravity="center"
             android:text="Inicio de sesión"
@@ -58,56 +65,64 @@
             android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/lbl_mail" />
 
         <TextView
             android:id="@+id/lbl_mail"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/quicksand_regular"
             android:text="Correo"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/ipt_login_mail"
-            app:layout_constraintTop_toTopOf="parent" />
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lbl_login_form"
+            app:layout_constraintBottom_toTopOf="@id/et_login_mail" />
 
         <EditText
-            android:id="@+id/ipt_login_mail"
-            android:layout_width="287dp"
-            android:layout_height="34dp"
-            android:layout_marginTop="12dp"
+            android:id="@+id/et_login_mail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.08"
             android:background="@drawable/input_background"
             android:fontFamily="@font/quicksand_regular"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lbl_mail" />
+            app:layout_constraintTop_toBottomOf="@+id/lbl_mail"
+            app:layout_constraintBottom_toTopOf="@id/lbl_password"/>
 
         <TextView
             android:id="@+id/lbl_password"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/quicksand_regular"
             android:text="Contraseña"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/ipt_login_password"
-            app:layout_constraintTop_toBottomOf="@+id/ipt_login_mail" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_login_mail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/et_login_password"/>
 
         <EditText
-            android:id="@+id/ipt_login_password"
-            android:layout_width="287dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
+            android:id="@+id/et_login_password"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.08"
             android:background="@drawable/input_background"
             android:fontFamily="@font/quicksand_regular"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.513"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lbl_password" />
+            app:layout_constraintTop_toBottomOf="@+id/lbl_password"
+            app:layout_constraintBottom_toTopOf="@id/btn_login"
+            app:layout_constraintHorizontal_bias="0.5" />
 
         <Button
             android:id="@+id/btn_login"
@@ -121,27 +136,32 @@
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.504"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ipt_login_password"
+            app:layout_constraintTop_toBottomOf="@+id/et_login_password"
             app:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="201dp"
-            android:layout_height="19dp"
-            android:layout_marginBottom="24dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
+            app:layout_constraintWidth_percent="0.7"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toBottomOf="@id/btn_login"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                 android:id="@+id/lbl_login_cuenta"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:fontFamily="@font/quicksand_regular"
                 android:gravity="center"
                 android:text="¿No tienes cuenta?"
@@ -152,8 +172,8 @@
 
             <TextView
                 android:id="@+id/lbl_register"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:fontFamily="@font/quicksand_bold"
                 android:gravity="center"
@@ -163,5 +183,6 @@
                 app:layout_constraintStart_toEndOf="@+id/lbl_login_cuenta"
                 app:layout_constraintTop_toBottomOf="@+id/btn_login_ingresar" />
         </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

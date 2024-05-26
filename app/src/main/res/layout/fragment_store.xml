@@ -4,20 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_50"
-    tools:context=".ui.fragment.StoreFragment">
+    android:background="@color/white_50" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="10dp"
-        android:paddingBottom="20dp"
         android:background="#CCFFFFFF"
         android:orientation="vertical"
-        android:padding="15dp"
-        android:layout_marginBottom="30dp"
-        >
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="10dp"
+        android:layout_marginBottom="70dp" >
 
         <TextView
             android:layout_width="match_parent"
@@ -49,10 +47,12 @@
             <EditText
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="34dp"
                 android:layout_marginHorizontal="3dp"
-                android:textSize="16sp"
-                android:background="@drawable/input_background" />
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/quicksand_regular"
+                android:background="@drawable/input_background"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -96,6 +96,7 @@
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="194dp"
+                android:layout_weight="1"
                 android:background="@color/transparent" />
 
             <Button
