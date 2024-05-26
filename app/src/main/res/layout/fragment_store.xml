@@ -21,9 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_semibold"
-            android:gravity="center_vertical"
             android:paddingVertical="10dp"
-            android:text="Registra tu balón"
+            android:text="Realizar Pedido"
+            android:textAlignment="center"
             android:textColor="@color/blue_400"
             android:textSize="23sp" />
 
@@ -38,21 +38,43 @@
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:fontFamily="@font/quicksand_regular"
                 android:textColor="@color/black"
                 android:text="Dirección"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/spinner"
+                android:id="@+id/et_address"
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
+                android:layout_height="40dp"
                 android:layout_marginHorizontal="3dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:background="@drawable/input_background" />
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/quicksand_regular"
-                android:background="@drawable/input_background"
-                android:textSize="16sp" />
+                android:text="Distribuidor"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+            <AutoCompleteTextView
+                android:id="@+id/et_distributor"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/black"
+                android:background="@drawable/spinner_background" />
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapPreview"
+                android:layout_width="match_parent"
+                android:layout_height="194dp" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -64,52 +86,73 @@
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:id="@+id/spinner2"
+            <AutoCompleteTextView
+                android:id="@+id/et_valve"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="40dp"
                 android:layout_marginHorizontal="3dp"
                 android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/black"
                 android:background="@drawable/spinner_background"
                 android:entries="@array/tipos_valvula_disponibles" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textPay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/quicksand_regular"
-                android:text="Empresa"
+                android:text="Pagar con:"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:id="@+id/spinner3"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginHorizontal="3dp"
-                android:textSize="16sp"
-                android:background="@drawable/spinner_background"
-                android:entries="@array/marcas_disponibles" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_margin="10dp">
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="194dp"
-                android:layout_weight="1"
-                android:background="@color/transparent" />
+                <ImageButton
+                    android:id="@+id/yape"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:layout_margin="10dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/icon_yape_round" />
+
+                <ImageButton
+                    android:id="@+id/plin"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:layout_margin="10dp"
+                    android:src="@mipmap/icon_plin_round"
+                    android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+                <ImageButton
+                    android:id="@+id/efectivo"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:layout_margin="10dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/icon_cash_round" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_add_tank"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:theme="@style/Button.Custom"
                 android:gravity="center"
                 android:insetLeft="10dp"
                 android:insetRight="10dp"
-                android:text="Elegir Distribuidor" />
+                android:text="Pedir" />
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>

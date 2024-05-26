@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- para acceder a la red -->
 
     <application
+        android:name=".MyAppDistributror"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,7 +23,7 @@
         android:theme="@style/Theme.GasApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.MapActivity"
+            android:name=".ui.map.MapActivity"
             android:exported="false" />
         <!-- este el el api key de google maps para usar en la app -->
         <meta-data
