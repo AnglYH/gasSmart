@@ -39,8 +39,7 @@
                 android:background="@android:color/transparent"
                 android:foregroundGravity="center"
                 android:scaleType="fitCenter"
-                app:tint="@color/blue_100"
-                app:srcCompat="@drawable/ic_wifi_outline_icon_24dp" />
+                app:srcCompat="@drawable/ic_wifi_on_24dp" />
         </LinearLayout>
         <ImageView
             android:id="@+id/imageView"
@@ -50,13 +49,40 @@
             android:layout_weight="4"
             app:tint="@color/blue_100"
             app:srcCompat="@drawable/ic_gas_tank_img" />
+
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tv_remaining_days"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="30dp"
+            android:layout_weight="0.2"
+            android:fontFamily="@font/quicksand_regular"
+            android:gravity="center_horizontal"
             android:text="Aproximadamente quedan 6 días de uso restantes"
-            android:textSize="30sp"
+            android:textColor="@color/blue_400"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Fecha"
+            android:textSize="20sp"
+            android:textColor="@color/blue_400"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="30dp"
+            android:fontFamily="@font/quicksand_regular"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tv_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Porcentaje de gas"
+            android:textSize="20sp"
             android:textColor="@color/blue_400"
             android:gravity="center_horizontal"
             android:layout_marginHorizontal="30dp"
@@ -67,11 +93,11 @@
             android:id="@+id/btn_add_sensor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
-            android:theme="@style/Button.Custom"
+            android:layout_weight="0.5"
             android:gravity="center"
             android:insetLeft="30dp"
             android:insetRight="30dp"
-            android:text="Registrar sensor" />
+            android:text="Registrar sensor"
+            android:theme="@style/Button.Custom" />
     </LinearLayout>
 </LinearLayout>
