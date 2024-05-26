@@ -2,72 +2,56 @@ package com.miempresa.gasapp.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.miempresa.gasapp.R
-import com.miempresa.gasapp.Database.UserDatabase
+import com.google.firebase.auth.FirebaseAuth
 import com.miempresa.gasapp.MainActivity
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.miempresa.gasapp.databinding.ActivityLoginUserBinding
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var editTextUsername: EditText
-    private lateinit var editTextPassword: EditText
-    private lateinit var db: UserDatabase
+    private lateinit var binding: ActivityLoginUserBinding
+    private lateinit var auth: FirebaseAuth
 
-    @OptIn(DelicateCoroutinesApi::class)
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_user)
+        binding = ActivityLoginUserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        db = UserDatabase.getInstance(this)
+        auth = FirebaseAuth.getInstance()
 
-        editTextUsername = findViewById(R.id.ipt_login_mail)
-        editTextPassword = findViewById(R.id.ipt_login_password)
-        val buttonLogin = findViewById<Button>(R.id.btn_login)
-        val textViewRegister = findViewById<TextView>(R.id.lbl_register)
+        // Verificar si el usuario ya ha iniciado sesión
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // Si el usuario ya ha iniciado sesión, redirigir a MainActivity
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            finish() // Finalizar LoginActivity para que el usuario no pueda volver a ella al presionar el botón de retroceso
+            return
+        }
 
-        buttonLogin.setOnClickListener {
-            val email = editTextUsername.text.toString().trim()
-            val password = editTextPassword.text.toString().trim()
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etLoginMail.text.toString().trim()
+            val password = binding.etLoginPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            GlobalScope.launch(Dispatchers.IO) {
-                val user = db.userDao().getUserByEmail(email)
-
-                if (user != null) {
-                    if (user.password == password) {
-                        // Credenciales válidas, iniciar sesión
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        // Contraseña incorrecta
-                        runOnUiThread {
-                            Toast.makeText(this@LoginActivity, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
-                        }
-                    }
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(intent)
                 } else {
-                    // Usuario no encontrado
-                    runOnUiThread {
-                        Toast.makeText(this@LoginActivity, "El usuario no existe, regístrate por favor", Toast.LENGTH_SHORT).show()
-                    }
+                    // If sign in fails, display a message to the user.
+                    Toast.makeText(this, "Error de autenticación", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        textViewRegister.setOnClickListener {
+        binding.lblRegister.setOnClickListener {
             startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
         }
     }
 }
-
-

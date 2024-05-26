@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.miempresa.gasapp"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- este es el permiso que se le da a la aplicacion para que pueda acceder a la ubicacion del dispositivo -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
