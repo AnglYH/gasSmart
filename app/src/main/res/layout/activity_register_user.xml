@@ -4,161 +4,180 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/auth_background"
-    tools:context=".ui.auth.RegisterActivity">
+    tools:context=".ui.auth.RegisterActivity"
+    android:background="@drawable/auth_background">
 
     <ImageView
         android:id="@+id/img_logo"
-        android:layout_width="285dp"
-        android:layout_height="159dp"
-        android:layout_marginTop="28dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,16:9"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.07"
+        app:layout_constraintWidth_percent="0.8"
         app:srcCompat="@drawable/logo03" />
 
     <TextView
         android:id="@+id/lbl_login_tagline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:fontFamily="@font/quicksand_regular"
         android:text="Siempre seguro, siempre ahora"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_logo"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="337dp"
-        android:layout_height="462dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/auth_form_background"
+        app:layout_constraintHeight_percent="0.6"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:paddingTop="20dp"
+        android:paddingHorizontal="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_logo"
-        app:layout_constraintVertical_bias="0.529">
+        app:layout_constraintTop_toBottomOf="@+id/lbl_login_tagline"
+        app:layout_constraintVertical_bias="0.5">
 
         <TextView
-            android:layout_width="291dp"
-            android:layout_height="33dp"
-            android:layout_margin="20dp"
-            android:layout_marginTop="10dp"
+            android:id="@+id/lbl_register_form"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_semibold"
             android:foregroundGravity="center"
             android:text="Crea una cuenta"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="23sp"
+            app:layout_constraintBottom_toTopOf="@id/lbl_mail"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.513"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/lbl_mail"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
             android:fontFamily="@font/quicksand_regular"
             android:text="Correo"
+            android:layout_marginTop="20dp"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/ipt_register_mail"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lbl_register_form"
+            app:layout_constraintBottom_toTopOf="@id/et_register_mail"/>
 
         <EditText
-            android:id="@+id/ipt_register_mail"
-            android:layout_width="287dp"
-            android:layout_height="34dp"
-            android:layout_marginTop="4dp"
+            android:id="@+id/et_register_mail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
             android:background="@drawable/input_background"
             android:fontFamily="@font/quicksand_regular"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lbl_mail" />
+            app:layout_constraintTop_toBottomOf="@+id/lbl_mail"
+            app:layout_constraintBottom_toTopOf="@id/lbl_register_password"/>
 
         <TextView
-            android:id="@+id/lbl_contraseña"
-            android:layout_width="wrap_content"
+            android:id="@+id/lbl_register_password"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/quicksand_regular"
             android:text="Contraseña"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/ipt_register_password"
-            app:layout_constraintTop_toBottomOf="@+id/ipt_register_mail" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_register_mail"
+            app:layout_constraintBottom_toTopOf="@id/et_register_password"/>
 
         <EditText
-            android:id="@+id/ipt_register_password"
-            android:layout_width="287dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
+            android:id="@+id/et_register_password"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
             android:background="@drawable/input_background"
             android:fontFamily="@font/quicksand_regular"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.513"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lbl_contraseña" />
+            app:layout_constraintTop_toBottomOf="@+id/lbl_register_password"
+            app:layout_constraintBottom_toTopOf="@id/lbl_password_check"/>
 
         <TextView
             android:id="@+id/lbl_password_check"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/quicksand_regular"
             android:text="Confirmar contraseña"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/ipt_register_password_check"
-            app:layout_constraintTop_toBottomOf="@+id/ipt_register_password" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_register_password"
+            app:layout_constraintBottom_toTopOf="@id/et_register_password_check"/>
 
         <EditText
-            android:id="@+id/ipt_register_password_check"
-            android:layout_width="287dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
+            android:id="@+id/et_register_password_check"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
             android:background="@drawable/input_background"
             android:fontFamily="@font/quicksand_regular"
             android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.513"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lbl_password_check" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_password_check"
+            app:layout_constraintBottom_toTopOf="@id/lbl_phone"/>
 
         <TextView
             android:id="@+id/lbl_phone"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/quicksand_regular"
             android:text="Teléfono"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/ipt_register_phone"
-            app:layout_constraintTop_toBottomOf="@+id/ipt_register_password_check" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_register_password_check"
+            app:layout_constraintBottom_toTopOf="@id/et_register_phone"/>
 
         <EditText
-            android:id="@+id/ipt_register_phone"
-            android:layout_width="287dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
+            android:id="@+id/et_register_phone"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
             android:background="@drawable/input_background"
             android:fontFamily="@font/quicksand_regular"
             android:inputType="phone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.513"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lbl_phone" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_phone"
+            app:layout_constraintBottom_toTopOf="@id/btn_register"/>
 
         <Button
             android:id="@+id/btn_register"
@@ -170,22 +189,28 @@
             android:text="Registrarse"
             android:textColor="@color/white"
             android:theme="@style/Button.Custom"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ipt_register_phone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/linearLayout"
+            app:layout_constraintTop_toBottomOf="@+id/et_register_phone"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="250dp"
-            android:layout_height="19dp"
-            android:layout_marginBottom="24dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintWidth_percent="0.9"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/btn_register"
+            app:layout_constraintHorizontal_bias="0.5" >
 
             <TextView
                 android:id="@+id/lbl_login_cuenta"
