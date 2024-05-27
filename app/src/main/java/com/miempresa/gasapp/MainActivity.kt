@@ -34,7 +34,19 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
+        // Guardar datos en SharedPreferences
+        val sharedPreferences = getSharedPreferences("user_info", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("email", intent.getStringExtra("email"))
+        editor.putString("phone", intent.getStringExtra("phone"))
+        editor.apply()
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
+
+    private fun saveUserData() {
+
+    }
+
 }
