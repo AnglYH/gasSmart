@@ -29,7 +29,7 @@
                 android:fontFamily="@font/quicksand_semibold"
                 android:gravity="center_vertical"
                 android:paddingVertical="10dp"
-                android:text="Registra tu balón"
+                android:text="Tu balón de gas"
                 android:textColor="@color/blue_400"
                 android:textSize="23sp" />
 
@@ -59,14 +59,12 @@
                 android:text="Marca"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:id="@+id/spinner"
+            <TextView
+                android:id="@+id/marca"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="3dp"
-                android:layout_weight="2"
-                android:background="@drawable/spinner_background"
-                android:entries="@array/marcas_disponibles" />
+                android:layout_weight="2"/>
 
             <TextView
                 android:id="@+id/textView2"
@@ -78,14 +76,12 @@
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:id="@+id/spinner2"
+            <TextView
+                android:id="@+id/tipo_valvula"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="3dp"
-                android:layout_weight="2"
-                android:background="@drawable/spinner_background"
-                android:entries="@array/tipos_valvula_disponibles" />
+                android:layout_weight="2"/>
 
             <TextView
                 android:id="@+id/textView3"
@@ -97,21 +93,14 @@
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <Spinner
+            <TextView
                 android:id="@+id/spinner3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="3dp"
-                android:layout_weight="2"
-                android:background="@drawable/spinner_background"
-                android:entries="@array/pesos_disponibles" />
+                android:layout_weight="2" />
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="194dp"
-                android:layout_weight="4"
-                android:background="@color/transparent" />
+
 
             <Button
                 android:id="@+id/btn_add_tank"
@@ -125,6 +114,5 @@
                 android:insetRight="10dp"
                 android:text="Registrar" />
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>

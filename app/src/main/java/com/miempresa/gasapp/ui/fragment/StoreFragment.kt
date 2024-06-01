@@ -24,7 +24,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.miempresa.gasapp.R
-import com.miempresa.gasapp.data.DistribuidoraRepository
+import com.miempresa.gasapp.data.DistributorRepository
 import com.miempresa.gasapp.databinding.FragmentStoreBinding
 import com.miempresa.gasapp.ui.map.MapActivity
 import com.miempresa.gasapp.utils.LocationUtils
@@ -127,12 +127,12 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
 
         // Recuperar las distribuidoras de la base de datos
-        val repository = DistribuidoraRepository()
+        val repository = DistributorRepository()
 
 
         lifecycleScope.launch {
-            val distribuidorasFromDb = repository.getAllDistribuidoras()
-            val namesFromDb = distribuidorasFromDb.map { it.nombre } // Cambiado de it.name a it.nombre
+            val distribuidorasFromDb = repository.getAllDistributors()
+            val namesFromDb = distribuidorasFromDb.map { it.name } // Cambiado de it.name a it.nombre
 
             // Configurar el ArrayAdapter para el AutoCompleteTextView
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, namesFromDb)
@@ -158,15 +158,19 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
         }
         LocationUtils.enableLocationOnMap(requireActivity(), googleMap)
 
-        val repository = DistribuidoraRepository()
+        val repository = DistributorRepository()
 
         // Recuperar las distribuidoras de la base de datos y agregar marcadores al mapa
         lifecycleScope.launch {
-            val distribuidorasFromDb = repository.getAllDistribuidoras()
-            val locationsFromDb = distribuidorasFromDb.map { LatLng(it.latitud, it.longitud) }
-            val titlesFromDb = distribuidorasFromDb.map { it.nombre } // Cambiado de it.name a it.nombre
-            LocationUtils.addMarkersToMap(googleMap, locationsFromDb, titlesFromDb)
-            LocationUtils.animateCameraToLocation(googleMap, locationsFromDb[0], 15f)
+            val distribuidorasFromDb = repository.getAllDistributors()
+            val locationsFromDb = distribuidorasFromDb.mapNotNull {
+                if (it.latitud != null && it.longitud != null) LatLng(it.latitud, it.longitud) else null
+            }
+            val titlesFromDb = distribuidorasFromDb.mapNotNull { it.name }
+            LocationUtils.addMarkersToMap(googleMap, locationsFromDb, titlesFromDb.filterNotNull())
+            if (locationsFromDb.isNotEmpty()) {
+                LocationUtils.animateCameraToLocation(googleMap, locationsFromDb[0], 15f)
+            }
         }
     }
     override fun onRequestPermissionsResult(

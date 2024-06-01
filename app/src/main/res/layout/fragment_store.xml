@@ -146,13 +146,13 @@
             <Button
                 android:id="@+id/btn_add_tank"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:theme="@style/Button.Custom"
                 android:gravity="center"
                 android:insetLeft="10dp"
                 android:insetRight="10dp"
-                android:text="Pedir" />
+                android:text="Pedir"
+                android:theme="@style/Button.Custom" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

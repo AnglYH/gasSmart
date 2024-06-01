@@ -10,7 +10,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.miempresa.gasapp.R
-import com.miempresa.gasapp.data.DistribuidoraRepository
+import com.miempresa.gasapp.data.DistributorRepository
 import com.miempresa.gasapp.utils.LocationUtils
 import kotlinx.coroutines.launch
 
@@ -32,15 +32,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
         mMap.setOnMyLocationClickListener(this)
         LocationUtils.enableLocationOnMap(this, mMap)
 
-        val repository = DistribuidoraRepository()
+        val repository = DistributorRepository()
 
-// Recuperar las distribuidoras de la base de datos y agregar marcadores al mapa
         lifecycleScope.launch {
-            val distribuidorasFromDb = repository.getAllDistribuidoras()
-            val locationsFromDb = distribuidorasFromDb.map { LatLng(it.latitud, it.longitud) } // Cambiado de it.latitude a it.latitud y de it.longitude a it.longitud
-            val titlesFromDb = distribuidorasFromDb.map { it.nombre } // Cambiado de it.name a it.nombre
+            val distributorsFromDb = repository.getAllDistributors()
+            val locationsFromDb = distributorsFromDb.map {
+                val locationParts = it.location?.split(",") ?: listOf("0", "0")
+                LatLng(locationParts[0].toDouble(), locationParts[1].toDouble())
+            }
+            val titlesFromDb = distributorsFromDb.map { it.name ?: "" }
             LocationUtils.addMarkersToMap(mMap, locationsFromDb, titlesFromDb)
-            LocationUtils.animateCameraToLocation(mMap, locationsFromDb[0], 15f)
+            if (locationsFromDb.isNotEmpty()) {
+                LocationUtils.animateCameraToLocation(mMap, locationsFromDb[0], 15f)
+            }
         }
     }
 
