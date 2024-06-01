@@ -1,36 +1,29 @@
 package com.miempresa.gasapp.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Spinner
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
-import com.miempresa.gasapp.DAO.GasTankDao
-import com.miempresa.gasapp.Database.GasTankDatabase
-import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
-import com.miempresa.gasapp.model.GasTank
+import com.miempresa.gasapp.data.GasTankRepository
+import com.miempresa.gasapp.data.PurchaseRepository
 import com.miempresa.gasapp.ui.dialog.AyudaRegistroBalonDialogFragment
-import com.miempresa.gasapp.ui.dialog.AyudaWifiDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RegisterTankActivity : AppCompatActivity() {
 
-    private lateinit var db: GasTankDatabase
-    private lateinit var gasTankDao: GasTankDao
-    private lateinit var spin1: Spinner
-    private lateinit var spin2: Spinner
-    private lateinit var spin3: Spinner
-    private lateinit var btnAddGasTank: Button
+    private lateinit var purchaseRepository: PurchaseRepository
+    private lateinit var gasTankRepository: GasTankRepository
+    private lateinit var tvMarca: TextView
+    private lateinit var tvValvula: TextView
+    private lateinit var tvPeso: TextView
     private lateinit var btn_tank_register : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,37 +37,16 @@ class RegisterTankActivity : AppCompatActivity() {
         }
 
         // Inicializamos los elementos de la vista
-        btnAddGasTank = findViewById(R.id.btn_add_tank)
-        spin1 = findViewById(R.id.spinner)
-        spin2 = findViewById(R.id.spinner2)
-        spin3 = findViewById(R.id.spinner3)
+        tvMarca = findViewById(R.id.marca)
+        tvValvula = findViewById(R.id.tipo_valvula)
+        tvPeso = findViewById(R.id.spinner3)
 
-        // Inicializamos la base de datos
-        db = Room.databaseBuilder(
-            applicationContext,
-            GasTankDatabase::class.java, "gasTank"
-        ).fallbackToDestructiveMigration()
-            .build()
+        // Inicializamos los repositorios
+        purchaseRepository = PurchaseRepository()
+        gasTankRepository = GasTankRepository()
 
-        // Se obtiene el GasTankDao
-        gasTankDao = db.gasTankDao()
-
-
-        btnAddGasTank.setOnClickListener {
-
-            val marca = spin1.selectedItem.toString().trim()
-            val valvula = spin2.selectedItem.toString().trim()
-            val peso = spin3.selectedItem.toString()
-
-            val gasTank = GasTank(
-                null,
-                marca,
-                valvula,
-                peso
-            )
-            agregarBalon(gasTank)
-            mostrarBalones()
-        }
+        // Recuperamos los detalles de la compra
+        mostrarDetallesCompra()
 
         val btn_tank_register = findViewById<ImageView>(R.id.iv_tank_register)
 
@@ -85,33 +57,24 @@ class RegisterTankActivity : AppCompatActivity() {
 
     }
 
-    private fun mostrarBalones() {
+    private fun mostrarDetallesCompra() {
         // Utilizamos corrutinas para realizar la consulta en un hilo secundario
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val gasTanks = gasTankDao.getAll()
-                gasTanks.forEach {
-                    Log.d("Balón de gas", it.toString())
+                val purchases = purchaseRepository.getAllPurchases()
+                purchases.forEach { purchase ->
+                    // Recuperamos los detalles del balón de gas usando el gasTankId de la compra
+                    val gasTank = gasTankRepository.getGasTank(purchase.gasTankId)
+                    // Actualizamos los TextViews con los detalles del balón de gas
+                    withContext(Dispatchers.Main) {
+                        tvMarca.text = gasTank?.gasBrand
+                        tvValvula.text = gasTank?.valveType
+                        tvPeso.text = gasTank?.gasWeight.toString()
+                    }
                 }
             } catch(e:Exception) {
                 Log.e("ERROR", e.toString())
             }
         }
     }
-    private fun agregarBalon(gasTank: GasTank) {
-        // Utilizamos corrutinas para realizar la consulta en un hilo secundario
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                gasTankDao.insert(gasTank)
-                mostrarBalones()
-
-                val intent = Intent(this@RegisterTankActivity, MainActivity::class.java)
-                startActivity(intent)
-
-            } catch(e:Exception) {
-                Log.e("ERROR", e.toString())
-            }
-        }
-    }
-
 }

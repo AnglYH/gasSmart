@@ -1,11 +1,11 @@
 package com.miempresa.gasapp.model
 
-import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class Sensor(
-    @SerializedName("id") val idSensor: Int,
-    @SerializedName("nombre") val code: String,
-    @SerializedName("id_balon") val idGasTank: Int,
-    @SerializedName("id_usuario") val idUser: Int
+    val idSensor: Int,
+    val code: String,
+    val gasTankId: Int, // ID del tanque de gas que el sensor está monitoreando
+    val idUser: Int,
+    val idWifi: Int
 ) : Serializable
