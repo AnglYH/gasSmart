@@ -10,7 +10,7 @@ import com.miempresa.gasapp.databinding.FragmentHomeSlideItemBinding
 import com.miempresa.gasapp.model.Sensor
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
 import androidx.lifecycle.Observer
-import com.miempresa.gasapp.BluetoothPairingActivity
+import com.miempresa.gasapp.ui.activity.BluetoothPairingActivity
 
 @Suppress("DEPRECATION")
 class ScreenSlidePageFragment : Fragment() {

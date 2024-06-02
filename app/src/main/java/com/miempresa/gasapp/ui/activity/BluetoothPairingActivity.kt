@@ -1,4 +1,4 @@
-package com.miempresa.gasapp
+package com.miempresa.gasapp.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.miempresa.gasapp.databinding.ActivityBluetoothPairingBinding
-import com.miempresa.gasapp.ui.activity.SensorWifiActivity
 
 class BluetoothPairingActivity : AppCompatActivity() {
 
