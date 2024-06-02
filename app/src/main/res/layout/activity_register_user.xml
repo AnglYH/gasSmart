@@ -63,10 +63,37 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="23sp"
-            app:layout_constraintBottom_toTopOf="@id/lbl_mail"
+            app:layout_constraintBottom_toTopOf="@id/lbl_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lbl_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_regular"
+            android:text="Nombre"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lbl_register_form"
+            app:layout_constraintBottom_toTopOf="@id/et_register_name"/>
+
+        <EditText
+            android:id="@+id/et_register_name"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
+            android:background="@drawable/input_background"
+            android:fontFamily="@font/quicksand_regular"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_name"
+            app:layout_constraintBottom_toTopOf="@id/lbl_mail"/>
 
         <TextView
             android:id="@+id/lbl_mail"
@@ -74,12 +101,12 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_regular"
             android:text="Correo"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lbl_register_form"
+            app:layout_constraintTop_toBottomOf="@id/et_register_name"
             app:layout_constraintBottom_toTopOf="@id/et_register_mail"/>
 
         <EditText
@@ -201,7 +228,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintWidth_percent="1"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="10dp"
             android:gravity="center"
@@ -214,12 +241,12 @@
 
             <TextView
                 android:id="@+id/lbl_login_cuenta"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.6"
                 android:fontFamily="@font/quicksand_regular"
                 android:gravity="center"
                 android:text="¿Ya tienes una cuenta?"
+                android:layout_marginEnd="10dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -227,9 +254,8 @@
 
             <TextView
                 android:id="@+id/lbl_login"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:fontFamily="@font/quicksand_bold"
                 android:gravity="center"
                 android:text="Inicia sesión"
@@ -238,5 +264,6 @@
                 app:layout_constraintStart_toEndOf="@+id/lbl_login_cuenta"
                 app:layout_constraintTop_toBottomOf="@+id/btn_login_ingresar" />
         </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

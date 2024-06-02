@@ -29,7 +29,7 @@ class WifiListAdapter(context: Context, wifiList: List<ScanResult>) : ArrayAdapt
             //val tvWifiCapabilities = view?.findViewById<TextView>(R.id.tv_capabilities)
 
             // Asignamos los valores correspondientes a los TextView
-            tvWifiName?.text = wifi?.wifiSsid.toString().replace("\"", "")
+            tvWifiName?.text = wifi?.SSID
             //tvWifiCapabilities?.text = wifi?.capabilities
             return view!!
         }
