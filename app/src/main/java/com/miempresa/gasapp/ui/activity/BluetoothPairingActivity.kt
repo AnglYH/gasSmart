@@ -1,11 +1,17 @@
 package com.miempresa.gasapp.ui.activity
 
+import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.miempresa.gasapp.databinding.ActivityBluetoothPairingBinding
@@ -14,7 +20,10 @@ class BluetoothPairingActivity : AppCompatActivity() {
 
     private val REQUEST_ENABLE_BT = 1
     private val REQUEST_DISCOVERABLE_BT = 2
-    private val SENSOR_NAME = "ESP32GasSmart" // Reemplaza esto con el nombre de tu sensor
+    private val SENSOR_NAME = "ANGELY" // Reemplaza esto con el nombre de tu sensor
+
+    private val MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT = 3
+    private val MY_PERMISSIONS_REQUEST_BLUETOOTH_ADMIN = 4
 
     lateinit var binding: ActivityBluetoothPairingBinding
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
@@ -33,14 +42,21 @@ class BluetoothPairingActivity : AppCompatActivity() {
         }
 
         binding.ibtnBluetooth.setOnClickListener {
-            if (bluetoothAdapter?.isEnabled == false) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-            } else {
-                val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
-                    putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
+                == PackageManager.PERMISSION_GRANTED) {
+                if (bluetoothAdapter?.isEnabled == false) {
+                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                } else {
+                    val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
+                        putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
+                    }
+                    startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT)
                 }
-                startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT)
+            } else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.BLUETOOTH_ADMIN),
+                    MY_PERMISSIONS_REQUEST_BLUETOOTH_ADMIN)
             }
         }
 
@@ -52,6 +68,7 @@ class BluetoothPairingActivity : AppCompatActivity() {
         binding.btnVerifyBluetoothPairing.isEnabled = false
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -61,20 +78,36 @@ class BluetoothPairingActivity : AppCompatActivity() {
             }
             startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT)
         } else if (requestCode == REQUEST_DISCOVERABLE_BT) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED) {
+                bluetoothAdapter?.bondedDevices?.forEach { device ->
+                    if (device.name == SENSOR_NAME) {
+                        binding.btnVerifyBluetoothPairing.isEnabled = true
+                    }
+                }
+            } else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                    MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    override fun onResume() {
+        super.onResume()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+            == PackageManager.PERMISSION_GRANTED) {
             bluetoothAdapter?.bondedDevices?.forEach { device ->
                 if (device.name == SENSOR_NAME) {
                     binding.btnVerifyBluetoothPairing.isEnabled = true
                 }
             }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        bluetoothAdapter?.bondedDevices?.forEach { device ->
-            if (device.name == SENSOR_NAME) {
-                binding.btnVerifyBluetoothPairing.isEnabled = true
-            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT)
         }
     }
 }
