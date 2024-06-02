@@ -68,7 +68,6 @@ class BluetoothPairingActivity : AppCompatActivity() {
         binding.btnVerifyBluetoothPairing.isEnabled = false
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -78,7 +77,12 @@ class BluetoothPairingActivity : AppCompatActivity() {
             }
             startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT)
         } else if (requestCode == REQUEST_DISCOVERABLE_BT) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+            val permissionToCheck = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Manifest.permission.BLUETOOTH_CONNECT
+            } else {
+                Manifest.permission.BLUETOOTH
+            }
+            if (ContextCompat.checkSelfPermission(this, permissionToCheck)
                 == PackageManager.PERMISSION_GRANTED) {
                 bluetoothAdapter?.bondedDevices?.forEach { device ->
                     if (device.name == SENSOR_NAME) {
@@ -87,17 +91,21 @@ class BluetoothPairingActivity : AppCompatActivity() {
                 }
             } else {
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                    arrayOf(permissionToCheck),
                     MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT)
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onResume() {
         super.onResume()
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+        val permissionToCheck = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Manifest.permission.BLUETOOTH_CONNECT
+        } else {
+            Manifest.permission.BLUETOOTH
+        }
+        if (ContextCompat.checkSelfPermission(this, permissionToCheck)
             == PackageManager.PERMISSION_GRANTED) {
             bluetoothAdapter?.bondedDevices?.forEach { device ->
                 if (device.name == SENSOR_NAME) {
@@ -106,7 +114,7 @@ class BluetoothPairingActivity : AppCompatActivity() {
             }
         } else {
             ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                arrayOf(permissionToCheck),
                 MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT)
         }
     }
