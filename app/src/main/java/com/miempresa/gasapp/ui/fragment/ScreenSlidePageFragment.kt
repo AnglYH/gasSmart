@@ -23,21 +23,21 @@ class ScreenSlidePageFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sensor = arguments?.getSerializable("sensor") as Sensor?
-        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
-
-        // Observa los cambios en idSensor
-        viewModel.idSensor.observe(this, Observer { idSensor ->
-            // Carga los datos del sensor
-            viewModel.loadSensorData(idSensor)
-        })
+//        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
+//
+//        // Observa los cambios en idSensor
+//        viewModel.idSensor.observe(this, Observer { idSensor ->
+//            // Carga los datos del sensor
+//            viewModel.loadSensorData(idSensor)
+//        })
     }
 
     override fun onResume() {
         super.onResume()
         // Inicia el polling de los datos del sensor
-        sensor?.let {
-            viewModel.startPollingSensorData(it.idSensor.toString())
-        }
+//        sensor?.let {
+//            viewModel.startPollingSensorData(it.idSensor.toString())
+//        }
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,13 +48,13 @@ class ScreenSlidePageFragment : Fragment() {
         val root: View = binding.root
 
         // Observa los cambios en sensorData
-        viewModel.sensorData.observe(viewLifecycleOwner, Observer { data ->
-            val (sensor, lectura) = data
-            binding.tvSensorCode.text = "Sensor ${sensor?.code}"
-            binding.tvRemainingDays.text = "Días restantes: ${lectura?.diasRest}"
-            binding.tvDate.text = "Fecha: ${lectura?.fecha}"
-            binding.tvPercentage.text = "Porcentaje: ${lectura?.porcentaje}%"
-        })
+//        viewModel.sensorData.observe(viewLifecycleOwner, Observer { data ->
+//            val (sensor, lectura) = data
+//            binding.tvSensorCode.text = "Sensor ${sensor?.code}"
+//            binding.tvRemainingDays.text = "Días restantes: ${lectura?.diasRest}"
+//            binding.tvDate.text = "Fecha: ${lectura?.fecha}"
+//            binding.tvPercentage.text = "Porcentaje: ${lectura?.porcentaje}%"
+//        })
 
         binding.btnAddSensor.setOnClickListener {
             val intent = Intent(context, BluetoothPairingActivity::class.java)
