@@ -31,12 +31,12 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         // Add TextChangedListener to EditText fields to validate and update colors
         binding.etRegisterMail.addTextChangedListener(createTextWatcher(binding.etRegisterMail, binding.lblMail))
         binding.etRegisterPassword.addTextChangedListener(createTextWatcher(binding.etRegisterPassword, binding.lblRegisterPassword))
         binding.etRegisterPasswordCheck.addTextChangedListener(createTextWatcher(binding.etRegisterPasswordCheck, binding.lblPasswordCheck))
         binding.etRegisterPhone.addTextChangedListener(createTextWatcher(binding.etRegisterPhone, binding.lblPhone))
+        binding.etRegisterName.addTextChangedListener(createTextWatcher(binding.etRegisterName, binding.lblName))
 
         setup()
     }
@@ -49,13 +49,14 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.etRegisterPassword.text.toString().trim()
             val confirmPassword = binding.etRegisterPasswordCheck.text.toString().trim()
             val phone = binding.etRegisterPhone.text.toString().trim()
+            val nombre = binding.etRegisterName.text.toString().trim() // Recoger el nombre del usuario
 
-            // Validate email, password, and phone
-            if (isValidEmail(email) && isValidPassword(password) && password == confirmPassword && isValidPhone(phone)) {
+            // Validate email, password, phone, and name
+            if (isValidEmail(email) && isValidPassword(password) && password == confirmPassword && isValidPhone(phone) && nombre.isNotEmpty()) {
                 // Register user with UserRepository
                 lifecycleScope.launch {
                     val userRepository = UserRepository()
-                    val isSuccessful = userRepository.registerUser(email, password, phone)
+                    val isSuccessful = userRepository.registerUser(email, password, phone, nombre) // Incluir el nombre como argumento
                     if (isSuccessful) {
                         // Show registration successful message
                         Toast.makeText(this@RegisterActivity, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
