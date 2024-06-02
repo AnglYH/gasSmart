@@ -85,12 +85,14 @@
                 android:fontFamily="@font/quicksand_regular"
                 android:background="@drawable/input_background" />
 
+
             <View
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="194dp"
                 android:layout_weight="1"
                 android:background="@color/transparent" />
+
 
             <Button
                 android:id="@+id/btn_apply_changes"
