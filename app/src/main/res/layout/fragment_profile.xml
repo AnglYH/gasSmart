@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,113 +7,164 @@
     android:background="@color/white_50"
     tools:context=".ui.fragment.ProfileFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginTop="10dp"
-        android:background="#CCFFFFFF"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="15dp"
-        android:paddingVertical="10dp"
-        android:layout_marginBottom="70dp">
+        app:layout_constraintGuide_percent="0.08" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/quicksand_semibold"
-            android:gravity="center_vertical"
-            android:paddingVertical="10dp"
-            android:text="Perfil de Usuario"
-            android:textColor="@color/blue_400"
-            android:textSize="23sp" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.91" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="8"
-            android:dividerPadding="10dp"
-            android:orientation="vertical">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
 
-            <TextView
-                android:id="@+id/tv_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/quicksand_regular"
-                android:textColor="@color/black"
-                android:text="Correo:"
-                android:textSize="18sp" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.94" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:fontFamily="@font/quicksand_regular"
-                android:text="Dirección"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
 
-            <EditText
-                android:id="@+id/et_address"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="3dp"
-                android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:fontFamily="@font/quicksand_regular"
-                android:background="@drawable/input_background" />
+    <TextView
+        android:id="@+id/tv_profile_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_semibold"
+        android:text="Perfil"
+        android:textColor="@color/blue_400"
+        android:textSize="23sp"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_bottom"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top"
+        app:layout_constraintVertical_bias="0.01" />
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="34dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/quicksand_regular"
-                android:text="Teléfono"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_regular"
+        android:text="Nombre:"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toBottomOf="@id/tv_profile_title"
+        app:layout_constraintBottom_toTopOf="@id/tv_email"
+        app:layout_constraintVertical_bias="0.1"
+        />
 
-            <EditText
-                android:id="@+id/et_phone"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="3dp"
-                android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:fontFamily="@font/quicksand_regular"
-                android:background="@drawable/input_background" />
+    <TextView
+        android:id="@+id/tv_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_regular"
+        android:textColor="@color/black"
+        android:text="Correo:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        app:layout_constraintBottom_toBottomOf="@id/tv_address_profile" />
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="194dp"
-                android:layout_weight="1"
-                android:background="@color/transparent" />
+    <TextView
+        android:id="@+id/tv_address_profile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_regular"
+        android:text="Dirección"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toBottomOf="@+id/tv_email"
+        app:layout_constraintBottom_toTopOf="@+id/et_address" />
 
-            <Button
-                android:id="@+id/btn_apply_changes"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:theme="@style/Button.Custom"
-                android:gravity="center"
-                android:insetLeft="10dp"
-                android:insetRight="10dp"
-                android:text="Guardar cambios" />
+    <EditText
+        android:id="@+id/et_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_background"
+        android:fontFamily="@font/quicksand_regular"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_phone"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_address_profile" />
 
-            <Button
-                android:id="@+id/btn_log_out"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:theme="@style/Button.Custom"
-                android:gravity="center"
-                android:insetLeft="10dp"
-                android:insetRight="10dp"
-                android:text="Cerrar sesión" />
-        </LinearLayout>
+    <TextView
+        android:id="@+id/tv_phone"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/quicksand_regular"
+        android:text="Teléfono"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toBottomOf="@+id/et_address"
+        app:layout_constraintBottom_toTopOf="@+id/et_phone" />
 
-    </LinearLayout>
-</LinearLayout>
+    <EditText
+        android:id="@+id/et_phone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_background"
+        android:fontFamily="@font/quicksand_regular"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_phone"
+        app:layout_constraintBottom_toTopOf="@id/btn_apply_changes"
+        />
+
+    <Button
+        android:id="@+id/btn_apply_changes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:insetLeft="10dp"
+        android:insetRight="10dp"
+        android:text="Guardar cambios"
+        android:theme="@style/Button.Custom"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintVertical_bias="0.88"
+        />
+
+    <Button
+        android:id="@+id/btn_log_out"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:insetLeft="10dp"
+        android:insetRight="10dp"
+        android:text="Cerrar sesión"
+        android:theme="@style/Button.Custom"
+        app:layout_constraintBottom_toTopOf="@id/guideline_bottom"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/btn_apply_changes" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
