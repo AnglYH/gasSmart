@@ -28,10 +28,11 @@ class UserRepository {
         }
     }
     suspend fun loginUser(email: String, password: String): Boolean {
-        var isSuccessful = false
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            isSuccessful = task.isSuccessful
-        }.await()
-        return isSuccessful
+        return try {
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            result.user != null
+        } catch (e: Exception) {
+            false
+        }
     }
 }
