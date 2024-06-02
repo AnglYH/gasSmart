@@ -4,5 +4,6 @@ data class Purchase(
     val purchaseId: String?, // ID único de la compra
     val userId: String?, // ID del usuario que realiza la compra
     val distributorId: String?, // ID del distribuidor donde se realiza la compra
-    val gasTankId: String? // ID del balón de gas que se compra
+    val gasTankId: String?, // ID del balón de gas que se compra
+    val address: String? // Dirección de donde se realizo el pedido
 )

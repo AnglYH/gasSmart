@@ -27,7 +27,7 @@ class WifiListAdapter(context: Context, wifiList: List<ScanResult>) : ArrayAdapt
         // Obtenemos las referencias a los TextView del layout
         val tvWifiName = view?.findViewById<TextView>(R.id.tv_ssid)
         //val tvWifiCapabilities = view?.findViewById<TextView>(R.id.tv_capabilities)
-
+        
         // Asignamos los valores correspondientes a los TextView
         // Aquí es donde se realiza el cambio, usamos SSID en lugar de wifiSsid
         tvWifiName?.text = wifi?.SSID

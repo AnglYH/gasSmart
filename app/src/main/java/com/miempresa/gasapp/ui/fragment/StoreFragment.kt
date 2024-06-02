@@ -15,6 +15,8 @@ import android.widget.AutoCompleteTextView
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -47,7 +49,14 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
     ): View {
         _binding = FragmentStoreBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        return binding.root
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        return root
     }
 
     override fun onDestroyView() {
@@ -81,13 +90,14 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                     val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                     addresses?.let {
                         if (it.isNotEmpty()) {
-                            val address = it[0].getAddressLine(0)
-                            binding.etAddress.setText(address)
+                            val address = it[0]
+                            val addressLine = address.getAddressLine(0)
+                            val district = address.subLocality // Aquí obtenemos el distrito
+                            binding.etAddress.setText("$addressLine, $district")
                         }
                     }
                 }
             }
-
 
         val valveTypes = resources.getStringArray(R.array.tipos_valvula_disponibles)
 

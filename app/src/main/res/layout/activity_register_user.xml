@@ -63,10 +63,37 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="23sp"
-            app:layout_constraintBottom_toTopOf="@id/lbl_mail"
+            app:layout_constraintBottom_toTopOf="@id/lbl_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lbl_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_regular"
+            android:text="Nombre"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lbl_register_form"
+            app:layout_constraintBottom_toTopOf="@id/et_register_name"/>
+
+        <EditText
+            android:id="@+id/et_register_name"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.06"
+            android:background="@drawable/input_background"
+            android:fontFamily="@font/quicksand_regular"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_name"
+            app:layout_constraintBottom_toTopOf="@id/lbl_mail"/>
 
         <TextView
             android:id="@+id/lbl_mail"
@@ -74,12 +101,12 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_regular"
             android:text="Correo"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lbl_register_form"
+            app:layout_constraintTop_toBottomOf="@id/et_register_name"
             app:layout_constraintBottom_toTopOf="@id/et_register_mail"/>
 
         <EditText
