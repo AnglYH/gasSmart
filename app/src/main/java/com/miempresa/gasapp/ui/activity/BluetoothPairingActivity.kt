@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -42,22 +43,9 @@ class BluetoothPairingActivity : AppCompatActivity() {
         }
 
         binding.ibtnBluetooth.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
-                == PackageManager.PERMISSION_GRANTED) {
-                if (bluetoothAdapter?.isEnabled == false) {
-                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-                } else {
-                    val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
-                        putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
-                    }
-                    startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT)
-                }
-            } else {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.BLUETOOTH_ADMIN),
-                    MY_PERMISSIONS_REQUEST_BLUETOOTH_ADMIN)
-            }
+            // Abre la configuración de Bluetooth del dispositivo
+            val intentOpenBluetoothSettings = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+            startActivity(intentOpenBluetoothSettings)
         }
 
         binding.btnVerifyBluetoothPairing.setOnClickListener {
