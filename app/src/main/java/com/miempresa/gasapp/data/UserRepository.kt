@@ -11,7 +11,7 @@ class UserRepository {
     private val database = Firebase.database
     private val userRef = database.getReference("users")
 
-    suspend fun registerUser(email: String, password: String, telefono: String, name: String? = null, address: String? = null): Boolean {
+    suspend fun registerUser(email: String, password: String, telefono: String, nombre: String?): Boolean {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = User(
@@ -19,15 +19,14 @@ class UserRepository {
                 password = password,
                 phone = telefono,
                 email = email,
-                address = address,
+                nombre = nombre
             )
-            userRef.child(user.id!!).setValue(user).await()
+            userRef.child(email.replace(".", ",")).setValue(user).await()
             true
         } catch (e: Exception) {
             false
         }
     }
-
     suspend fun loginUser(email: String, password: String): Boolean {
         var isSuccessful = false
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
