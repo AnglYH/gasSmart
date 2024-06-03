@@ -2,20 +2,21 @@ package com.miempresa.gasapp.ui.auth
 
 import android.app.AlertDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
+import com.miempresa.gasapp.data.UserRepository
 import com.miempresa.gasapp.databinding.ActivityRegisterUserBinding
-import com.miempresa.gasapp.model.User
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 enum class ProviderType {
@@ -30,12 +31,12 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         // Add TextChangedListener to EditText fields to validate and update colors
         binding.etRegisterMail.addTextChangedListener(createTextWatcher(binding.etRegisterMail, binding.lblMail))
         binding.etRegisterPassword.addTextChangedListener(createTextWatcher(binding.etRegisterPassword, binding.lblRegisterPassword))
         binding.etRegisterPasswordCheck.addTextChangedListener(createTextWatcher(binding.etRegisterPasswordCheck, binding.lblPasswordCheck))
         binding.etRegisterPhone.addTextChangedListener(createTextWatcher(binding.etRegisterPhone, binding.lblPhone))
+        binding.etRegisterName.addTextChangedListener(createTextWatcher(binding.etRegisterName, binding.lblName))
 
         setup()
     }
@@ -48,30 +49,19 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.etRegisterPassword.text.toString().trim()
             val confirmPassword = binding.etRegisterPasswordCheck.text.toString().trim()
             val phone = binding.etRegisterPhone.text.toString().trim()
+            val nombre = binding.etRegisterName.text.toString().trim() // Recoger el nombre del usuario
 
-            // Validate email, password, and phone
-            if (isValidEmail(email) && isValidPassword(password) && password == confirmPassword && isValidPhone(phone)) {
-                // Generate unique ID for the user
-                val userId = database.getReference("users").push().key
-
-                // Create User object
-                val user = User(id = userId, password = password, phone = phone)
-
-                // Register user with Firebase
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Save user in Firebase database
-                        database.getReference("users").child(email.replace(".", ",")).setValue(user).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // Show registration successful message
-                                Toast.makeText(this, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
-                                // Start main activity
-                                showMainActivity(email, ProviderType.BASIC)
-                            } else {
-                                // Show error message
-                                showAlert()
-                            }
-                        }
+            // Validate email, password, phone, and name
+            if (isValidEmail(email) && isValidPassword(password) && password == confirmPassword && isValidPhone(phone) && nombre.isNotEmpty()) {
+                // Register user with UserRepository
+                lifecycleScope.launch {
+                    val userRepository = UserRepository()
+                    val isSuccessful = userRepository.registerUser(email, password, phone, nombre) // Incluir el nombre como argumento
+                    if (isSuccessful) {
+                        // Show registration successful message
+                        Toast.makeText(this@RegisterActivity, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
+                        // Start main activity
+                        showMainActivity(email, ProviderType.BASIC)
                     } else {
                         // Show error message
                         showAlert()

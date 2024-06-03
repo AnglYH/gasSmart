@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.miempresa.gasapp.MainActivity
+import com.miempresa.gasapp.data.UserRepository
 import com.miempresa.gasapp.databinding.ActivityLoginUserBinding
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginUserBinding
@@ -37,15 +40,17 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
+            lifecycleScope.launch {
+                val userRepository = UserRepository()
+                val isSuccessful = userRepository.loginUser(email, password)
+                if (isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(this, "Error de autenticación", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Error de autenticación", Toast.LENGTH_SHORT).show()
                 }
             }
         }

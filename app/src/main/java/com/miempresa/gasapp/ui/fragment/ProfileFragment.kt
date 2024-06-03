@@ -22,7 +22,6 @@ class ProfileFragment : Fragment() {
     private val database = Firebase.database
     private val auth = Firebase.auth
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,9 +34,9 @@ class ProfileFragment : Fragment() {
         if (currentUser != null) {
             val userRef = database.getReference("users").child(currentUser.email!!.replace(".", ","))
             userRef.get().addOnSuccessListener { dataSnapshot ->
+                val nombre = dataSnapshot.child("nombre").value as String?
                 val phone = dataSnapshot.child("phone").value as String?
-                val address = dataSnapshot.child("address").value as String?
-                setup(currentUser.email, phone, address)
+                setup(nombre, currentUser.email, phone)
             }.addOnFailureListener {
                 // Manejar el error
             }
@@ -52,14 +51,11 @@ class ProfileFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setup(email: String?, phone: String?, address: String?) {
+    private fun setup(nombre: String?, email: String?, phone: String?) {
         _binding?.let { binding ->
+            binding.tvName.text = "Nombre: $nombre"
             binding.tvEmail.text = "Correo: $email"
             binding.etPhone.text = phone?.let { Editable.Factory.getInstance().newEditable(it) }
-            binding.etAddress.text = address?.let { Editable.Factory.getInstance().newEditable(it) }
-            if (address.isNullOrEmpty()) {
-                binding.etAddress.hint = "No ha agregado una dirección"
-            }
 
             binding.btnLogOut.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()
@@ -69,16 +65,14 @@ class ProfileFragment : Fragment() {
 
             binding.btnApplyChanges.setOnClickListener {
                 val newPhone = binding.etPhone.text.toString().trim()
-                val newAddress = binding.etAddress.text.toString().trim()
 
-                // Validate new phone number and address
-                if (isValidPhone(newPhone) && newAddress.isNotEmpty()) {
+                // Validate new phone number
+                if (isValidPhone(newPhone)) {
                     val currentUser = auth.currentUser
                     if (currentUser != null) {
-                        // Update phone number and address in Firebase database
+                        // Update phone number in Firebase database
                         val userRef = database.getReference("users").child(currentUser.email!!.replace(".", ","))
-                        userRef.child("phone").setValue(newPhone)
-                        userRef.child("address").setValue(newAddress).addOnCompleteListener { task ->
+                        userRef.child("phone").setValue(newPhone).addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 // Show success message
                                 Toast.makeText(activity, "Información actualizada exitosamente", Toast.LENGTH_SHORT).show()
@@ -90,7 +84,7 @@ class ProfileFragment : Fragment() {
                     }
                 } else {
                     // Show error message
-                    Toast.makeText(activity, "Por favor, ingresa un número de teléfono válido y una dirección", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Por favor, ingresa un número de teléfono válido", Toast.LENGTH_SHORT).show()
                 }
             }
         }
