@@ -2,6 +2,7 @@ package com.miempresa.gasapp.ui.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -26,6 +28,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 @Suppress("DEPRECATION")
 class WifiInputPasswordDialogFragment : DialogFragment() {
@@ -47,7 +51,6 @@ class WifiInputPasswordDialogFragment : DialogFragment() {
             val selectedWifi = arguments?.getParcelable<ScanResult>("selectedWifi")
             tvWifiSsid.text = "Red: ${selectedWifi?.SSID}"
 
-
             btnConfirm.setOnClickListener {
                 val password = etPassword.text.toString()
 
@@ -66,31 +69,43 @@ class WifiInputPasswordDialogFragment : DialogFragment() {
                             activity.connectToWifi(selectedWifi.wifiSsid.toString(), password)
                         }
 
-                        // Llamamiento a la API y envío de credenciales de red
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val response = apiService.enviarRedWifi(RedWifi(selectedWifi.SSID, password))
-                            if (response.isSuccessful) {
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(context, "Red enviada", Toast.LENGTH_SHORT).show()
-                                }
-                            } else {
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(context, "Error al enviar la red", Toast.LENGTH_SHORT).show()
-                                }
+                        // Obtén el BluetoothAdapter
+                        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+                        // Obtén el BluetoothDevice que representa al sensor
+                        // Reemplaza "ESP32GasSmart" con el nombre de tu sensor
+                        val sensorDevice = bluetoothAdapter.bondedDevices.find { it.name == "ESP32GasSmart" }
+
+                        sensorDevice?.let { device ->
+                            // Crea un BluetoothSocket y obtén un OutputStream de este
+                            val uuid = device.uuids[0].uuid
+                            val socket = device.createRfcommSocketToServiceRecord(uuid)
+                            socket.connect()
+                            val outputStream = socket.outputStream
+
+                            // Recupera el ID del usuario desde Firebase
+                            val user = FirebaseAuth.getInstance().currentUser
+                            val currentUserEmail = user?.email?.replace(".", ",")
+                            val database = FirebaseDatabase.getInstance()
+                            val userIdRef = database.getReference("users/${currentUserEmail}/id")
+                            Log.d("Firebase", "userIdRef: $userIdRef")
+
+                            // Lee el ID del usuario de la base de datos
+                            userIdRef.get().addOnSuccessListener { dataSnapshot ->
+                                val userId = dataSnapshot.getValue(String::class.java)
+                                    Log.d("Firebase", "userId: $userId")
+                                // Escribe los datos del SSID, la contraseña del WiFi y el ID del usuario en el OutputStream
+                                val wifiData = "$userId\n${selectedWifi.SSID}\n$password"
+                                outputStream.write(wifiData.toByteArray())
+
+                                // Cierra el OutputStream y el BluetoothSocket
+                                outputStream.close()
+                                socket.close()
+                            }.addOnFailureListener { exception ->
+                                // Maneja cualquier error que ocurra al leer la base de datos
+                                Log.e("Firebase", "Error al leer la base de datos", exception)
                             }
                         }
-
-                        // Implementación del retardo
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            // Aquí puedes comprobar si la conexión fue exitosa
-                            if (wifiManager.connectionInfo.ssid == String.format("\"%s\"", selectedWifi.SSID)) {
-                                Toast.makeText(context, "Conexión exitosa", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(context, MainActivity::class.java)
-                                startActivity(intent)
-                            } else {
-                                Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
-                            }
-                        }, 5000) // Retardo de 5 segundos
                     }
                 }
             }
