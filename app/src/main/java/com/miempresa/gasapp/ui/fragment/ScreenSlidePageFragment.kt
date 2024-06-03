@@ -1,6 +1,7 @@
 package com.miempresa.gasapp.ui.fragment
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,11 @@ import com.miempresa.gasapp.databinding.FragmentHomeSlideItemBinding
 import com.miempresa.gasapp.model.Sensor
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
 import androidx.lifecycle.Observer
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.ui.activity.BluetoothPairingActivity
+import kotlin.math.log
 
 @Suppress("DEPRECATION")
 class ScreenSlidePageFragment : Fragment() {
@@ -23,22 +28,17 @@ class ScreenSlidePageFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sensor = arguments?.getSerializable("sensor") as Sensor?
-//        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
-//
-//        // Observa los cambios en idSensor
-//        viewModel.idSensor.observe(this, Observer { idSensor ->
-//            // Carga los datos del sensor
-//            viewModel.loadSensorData(idSensor)
-//        })
+        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
     }
 
     override fun onResume() {
         super.onResume()
         // Inicia el polling de los datos del sensor
-//        sensor?.let {
-//            viewModel.startPollingSensorData(it.idSensor.toString())
-//        }
+        sensor?.let {
+            viewModel.startPollingSensorData(it.id)
+        }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,35 +47,22 @@ class ScreenSlidePageFragment : Fragment() {
         _binding = FragmentHomeSlideItemBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Observa los cambios en sensorData
-//        viewModel.sensorData.observe(viewLifecycleOwner, Observer { data ->
-//            val (sensor, lectura) = data
-//            binding.tvSensorCode.text = "Sensor ${sensor?.code}"
-//            binding.tvRemainingDays.text = "Días restantes: ${lectura?.diasRest}"
-//            binding.tvDate.text = "Fecha: ${lectura?.fecha}"
-//            binding.tvPercentage.text = "Porcentaje: ${lectura?.porcentaje}%"
-//        })
+        viewModel.sensorData.observe(viewLifecycleOwner, Observer { data ->
+            val (sensor, lectura) = data
+            binding.tvSensorCode.text = sensor?.name
+            binding.tvDate.text = lectura?.fecha_lectura
+            binding.tvPercentage.text = lectura?.porcentaje_gas.toString()
+
+        })
 
         binding.btnAddSensor.setOnClickListener {
             val intent = Intent(context, BluetoothPairingActivity::class.java)
             startActivity(intent)
         }
 
-        /*sensor?.let {
-            binding.tvSensorCode.text =  "Sensor ${it.code}"
-        } ?: run {
-            // Handle the case where sensor is null
-
-        }*/
-
-        // Button to access sensor wifi configuration
-        //binding.ibtnSensorWifi.setOnClickListener {
-        //    val intent = Intent(context, SensorWifiActivity::class.java)
-        //    startActivity(intent)
-        //}
-
         return root
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

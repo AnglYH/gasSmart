@@ -1,11 +1,10 @@
 package com.miempresa.gasapp.model
 
 data class Lectura(
-    val diasRest: Int, // representa los dias que le quedan al usuario
-    val fecha: String, //representa la fecha de la lectura
-    val porcentaje: Int, // representa el porcentaje de gas que le quedan al usuario
-    val idSensor: Int, // representa el id del sensor
-    val idGasTank: Int?, // reprensta el id del tanque de gas
-    val estado: String, // reprensenta el estado del sensor
-    val purchaseId: Int? // representa el id de la compra
+    var id: Long? = null, // Changed from String to Long
+    var compra_id: Long? = null,
+    var fecha_lectura: String? = null,
+    var marca_id: Long? = null,
+    var porcentaje_gas: Long? = null,
+    var sensor_id: String? = null
 )
