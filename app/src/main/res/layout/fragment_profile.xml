@@ -26,14 +26,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.028" />
+        app:layout_constraintGuide_percent="0.02" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.895" />
+        app:layout_constraintGuide_percent="0.91" />
 
     <TextView
         android:id="@+id/tv_profile_title"
@@ -58,10 +58,12 @@
         android:text="Nombre:"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintTop_toBottomOf="@id/tv_profile_title"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toTopOf="@id/tv_email"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/tv_profile_title"
         app:layout_constraintVertical_bias="0.1" />
 
     <TextView
@@ -69,23 +71,25 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_regular"
-        android:textColor="@color/black"
+        android:gravity="center_vertical"
         android:text="Correo:"
+        android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintBottom_toTopOf="@id/tv_address_profile"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintTop_toBottomOf="@id/tv_name"
-        app:layout_constraintBottom_toBottomOf="@id/tv_address_profile" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/tv_name" />
 
     <TextView
         android:id="@+id/tv_address_profile"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:fontFamily="@font/quicksand_regular"
         android:text="Dirección"
         android:textColor="@color/black"
         android:textSize="18sp"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toBottomOf="@+id/tv_email"
@@ -98,17 +102,16 @@
         android:background="@drawable/input_background"
         android:fontFamily="@font/quicksand_regular"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_phone"
+        app:layout_constraintBottom_toTopOf="@+id/tv_phone_profile"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@+id/tv_address_profile" />
 
     <TextView
-        android:id="@+id/tv_phone"
+        android:id="@+id/tv_phone_profile"
         android:layout_width="0dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_regular"
         android:text="Teléfono"
         android:textColor="@color/black"
@@ -125,11 +128,23 @@
         android:background="@drawable/input_background"
         android:fontFamily="@font/quicksand_regular"
         android:textSize="16sp"
+        app:layout_constraintVertical_weight="1"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_phone"
-        app:layout_constraintBottom_toTopOf="@id/btn_apply_changes" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_phone_profile"
+        app:layout_constraintBottom_toTopOf="@id/space_1" />
+
+    <Space
+        android:id="@+id/space_1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.28"
+        app:layout_constraintTop_toBottomOf="@+id/et_phone"
+        app:layout_constraintBottom_toTopOf="@+id/btn_apply_changes"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintHorizontal_bias="0.5" />
 
     <Button
         android:id="@+id/btn_apply_changes"
@@ -141,9 +156,8 @@
         android:insetRight="10dp"
         android:text="Guardar cambios"
         android:theme="@style/Button.Custom"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+        app:layout_constraintBottom_toTopOf="@+id/btn_log_out"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintTop_toBottomOf="@id/guideline_top"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintVertical_bias="0.88" />
 
@@ -157,10 +171,11 @@
         android:insetRight="10dp"
         android:text="Cerrar sesión"
         android:theme="@style/Button.Custom"
-        app:layout_constraintBottom_toTopOf="@id/guideline_bottom"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/btn_apply_changes" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline_top"
+        app:layout_constraintVertical_bias="1"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

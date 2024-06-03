@@ -25,14 +25,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.028" />
+        app:layout_constraintGuide_percent="0.02" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.895" />
+        app:layout_constraintGuide_percent="0.91" />
 
     <TextView
         android:id="@+id/tv_store_title"
@@ -40,7 +40,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_semibold"
         android:text="Realizar Pedido"
-        android:textAlignment="center"
         android:textColor="@color/blue_400"
         android:textSize="23sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
@@ -76,19 +75,20 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_address"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintBottom_toTopOf="@+id/tv_phone" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_distributor" />
 
     <TextView
-        android:id="@+id/tv_phone"
+        android:id="@+id/tv_distributor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_regular"
         android:text="Distribuidor"
         android:textColor="@color/black"
+        android:layout_marginEnd="5dp"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/et_address"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintEnd_toStartOf="@+id/tv_valve"
         app:layout_constraintBottom_toTopOf="@+id/et_distributor" />
 
     <AutoCompleteTextView
@@ -97,33 +97,24 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textColor="@color/black"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/spinner_background"
-        app:layout_constraintTop_toBottomOf="@+id/tv_phone"
+        app:layout_constraintTop_toBottomOf="@+id/tv_distributor"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintBottom_toTopOf="@+id/mapPreview" />
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapPreview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.26"
-        app:layout_constraintTop_toBottomOf="@+id/et_distributor"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintBottom_toTopOf="@+id/tv_address_profile"
-        app:layout_constraintHorizontal_bias="0.5" />
+        app:layout_constraintEnd_toStartOf="@+id/et_valve"
+        app:layout_constraintBottom_toTopOf="@+id/tv_tank_brand" />
 
     <TextView
-        android:id="@+id/tv_address_profile"
+        android:id="@+id/tv_valve"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_regular"
         android:text="Tipo de válvula"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/mapPreview"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        android:layout_marginStart="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/et_address"
+        app:layout_constraintStart_toEndOf="@id/tv_distributor"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintBottom_toTopOf="@+id/et_valve" />
 
@@ -135,10 +126,78 @@
         android:textColor="@color/black"
         android:background="@drawable/spinner_background"
         android:entries="@array/tipos_valvula_disponibles"
-        app:layout_constraintTop_toBottomOf="@+id/tv_address_profile"
+        android:layout_marginStart="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_valve"
+        app:layout_constraintStart_toEndOf="@id/et_distributor"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintBottom_toTopOf="@+id/tv_tank_weight" />
+
+    <TextView
+        android:id="@+id/tv_tank_brand"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="Marca"
+        android:fontFamily="@font/quicksand_regular"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/et_distributor"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toStartOf="@+id/tv_tank_weight"
+        app:layout_constraintBottom_toTopOf="@+id/et_tank_brand" />
+
+    <AutoCompleteTextView
+        android:id="@+id/et_tank_brand"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/spinner_background"
+        android:entries="@array/marcas_disponibles"
+        app:layout_constraintTop_toBottomOf="@+id/tv_tank_brand"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toStartOf="@+id/et_tank_weight"
+        app:layout_constraintBottom_toTopOf="@+id/mapPreview" />
+
+    <TextView
+        android:id="@+id/tv_tank_weight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="Peso"
+        android:fontFamily="@font/quicksand_regular"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/et_valve"
+        app:layout_constraintStart_toEndOf="@id/tv_tank_brand"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintBottom_toTopOf="@+id/et_tank_weight" />
+
+    <AutoCompleteTextView
+        android:id="@+id/et_tank_weight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/spinner_background"
+        android:entries="@array/pesos_disponibles"
+        app:layout_constraintTop_toBottomOf="@+id/tv_tank_weight"
+        app:layout_constraintStart_toEndOf="@id/et_tank_brand"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintBottom_toTopOf="@+id/mapPreview" />
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapPreview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.22"
+        app:layout_constraintTop_toBottomOf="@+id/et_tank_brand"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintBottom_toTopOf="@+id/textPay" />
+        app:layout_constraintBottom_toTopOf="@+id/textPay"
+        app:layout_constraintHorizontal_bias="0.5" />
 
     <TextView
         android:id="@+id/textPay"
@@ -148,7 +207,7 @@
         android:text="Pagar con:"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/et_valve"
+        app:layout_constraintTop_toBottomOf="@+id/mapPreview"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintBottom_toTopOf="@+id/ll_payment_methods" />
@@ -162,7 +221,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textPay"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintBottom_toTopOf="@+id/btn_add_tank" >
+        app:layout_constraintBottom_toTopOf="@+id/tv_total" >
 
         <ImageButton
             android:id="@+id/yape"
@@ -191,11 +250,23 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_total"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_regular"
+        android:text="Total: S/ 0.00"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_payment_methods"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_tank" />
+
     <Button
         android:id="@+id/btn_add_tank"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:gravity="center"
         android:insetLeft="10dp"
         android:insetRight="10dp"
@@ -203,8 +274,9 @@
         android:theme="@style/Button.Custom"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintHorizontal_bias="0.46"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/ll_payment_methods" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline_top"
+        app:layout_constraintVertical_bias="1"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
