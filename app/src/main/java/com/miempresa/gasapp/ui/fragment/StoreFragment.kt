@@ -7,13 +7,17 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -28,13 +32,19 @@ import com.google.android.gms.maps.model.LatLng
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.data.DistributorRepository
 import com.miempresa.gasapp.databinding.FragmentStoreBinding
+import com.miempresa.gasapp.model.ValveType
 import com.miempresa.gasapp.ui.map.MapActivity
 import com.miempresa.gasapp.utils.LocationUtils
 import kotlinx.coroutines.launch
 import java.util.Locale
+import com.google.firebase.database.FirebaseDatabase
+import com.miempresa.gasapp.model.Purchase
+import java.time.LocalDate
+import java.util.UUID
 
 
 class StoreFragment : Fragment(), OnMapReadyCallback {
+
     private var _binding: FragmentStoreBinding? = null
     private val binding get() = _binding!!
     private lateinit var mapView: MapView
@@ -139,13 +149,12 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
         // Recuperar las distribuidoras de la base de datos
         val repository = DistributorRepository()
 
-
         lifecycleScope.launch {
-            val distribuidorasFromDb = repository.getAllDistributors()
-            val namesFromDb = distribuidorasFromDb.map { it.name } // Cambiado de it.name a it.nombre
+            val distributorsFromDb = repository.getAllDistributors()
+            val distributorNames = distributorsFromDb.map { it.name }
 
             // Configurar el ArrayAdapter para el AutoCompleteTextView
-            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, namesFromDb)
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList(distributorNames))
 
             // Configurar el AutoCompleteTextView con el ArrayAdapter
             val distributorView = view.findViewById<AutoCompleteTextView>(R.id.et_distributor)
@@ -154,12 +163,109 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
             // Deshabilitar la entrada de texto
             distributorView.inputType = InputType.TYPE_NULL
 
-            // Mostrar la lista desplegable cuando se presione el AutoCompleteTextView
+            // Configurar el OnItemClickListener para el AutoCompleteTextView de los distribuidores
+            distributorView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+                // Recuperar el distribuidor seleccionado
+                val selectedDistributor = distributorsFromDb[position]
+                // Recuperar las marcas asociadas al distribuidor seleccionado
+                val brands = selectedDistributor.marca?.filterNotNull()?.map { it.nombre } ?: emptyList()
+
+                // Imprimir las marcas en la terminal
+                Log.d("StoreFragment", "Marcas asociadas al distribuidor seleccionado: $brands")
+
+                // Configurar el ArrayAdapter para el AutoCompleteTextView de las marcas
+                val brandAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList(brands))
+                val brandView = view.findViewById<AutoCompleteTextView>(R.id.et_tank_brand)
+                brandView.setAdapter(brandAdapter)
+
+                // Deshabilitar la entrada de texto
+                brandView.inputType = InputType.TYPE_NULL
+
+                // Forzar a que el desplegable se muestre
+                brandView.requestFocus()
+                brandView.showDropDown()
+
+                // Configurar el OnItemClickListener para el AutoCompleteTextView de las marcas
+                brandView.onItemClickListener = AdapterView.OnItemClickListener { _, _, brandPosition, _ ->
+                    // Recuperar la marca seleccionada
+                    val selectedBrand = selectedDistributor.marca?.filterNotNull()?.get(brandPosition)
+
+                    // Recuperar los tipos de válvulas asociados a la marca seleccionada
+                    val valves = selectedBrand?.valvula?.keys?.toList() ?: emptyList()
+
+                    // Configurar el ArrayAdapter para el AutoCompleteTextView de los tipos de válvulas
+                    val valveAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList(valves))
+                    val valveView = view.findViewById<AutoCompleteTextView>(R.id.et_valve)
+                    valveView.setAdapter(valveAdapter)
+
+                    // Deshabilitar la entrada de texto
+                    valveView.inputType = InputType.TYPE_NULL
+
+                    // Forzar a que el desplegable se muestre
+                    valveView.requestFocus()
+                    valveView.showDropDown()
+
+                    // Configurar el OnItemClickListener para el AutoCompleteTextView de los tipos de válvulas
+                    valveView.onItemClickListener = AdapterView.OnItemClickListener { _, _, valvePosition, _ ->
+                        // Recuperar el tipo de válvula seleccionado
+                        val selectedValveType = valves[valvePosition]
+
+                        // Imprimir el tipo de válvula en la terminal
+                        Log.d("StoreFragment", "Tipo de válvula seleccionado: $selectedValveType")
+
+                        // Recuperar los datos de la válvula seleccionada
+                        val selectedValveData = selectedBrand?.valvula?.get(selectedValveType) as? ValveType
+
+                        // Recuperar el peso asociado al tipo de válvula seleccionado
+                        val weight = selectedValveData?.peso
+
+                        // Imprimir el peso en la terminal
+                        Log.d("StoreFragment", "Peso asociado al tipo de válvula seleccionado: $weight")
+
+                        // Configurar el ArrayAdapter para el AutoCompleteTextView del peso
+                        val weightAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf(weight ?: ""))
+                        val weightView = view.findViewById<AutoCompleteTextView>(R.id.et_tank_weight)
+                        weightView.setAdapter(weightAdapter)
+
+                        // Deshabilitar la entrada de texto
+                        weightView.inputType = InputType.TYPE_NULL
+
+                        // Forzar a que el desplegable se muestre
+                        weightView.showDropDown()
+
+                        // Recuperar el precio asociado al tipo de válvula seleccionado
+                        val price = selectedValveData?.precio
+
+                        // Imprimir el precio en la terminal
+                        Log.d("StoreFragment", "Precio asociado al tipo de válvula seleccionado: $price")
+
+                        // Configurar el TextView del total con el precio
+                        val totalTextView = view.findViewById<TextView>(R.id.tv_total)
+                        totalTextView.text = "Total: S/ ${price ?: 0.00}"
+                    }
+                }
+            }
+
+            // Mostrar la lista desplegable cuando se haga clic en el AutoCompleteTextView
             distributorView.setOnClickListener {
                 distributorView.showDropDown()
             }
         }
+        val btnAddTank = view.findViewById<Button>(R.id.btn_add_tank)
+        btnAddTank.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Confirmar compra")
+                .setMessage("¿Estás seguro de que quieres realizar esta compra?")
+                .setPositiveButton("Sí") { _, _ ->
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
     }
+
+
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         googleMap.setOnMapClickListener {
@@ -229,5 +335,4 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
-
 }
