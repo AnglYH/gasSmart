@@ -19,6 +19,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -66,6 +67,8 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
             insets
         }
 
+        binding.tvStoreTitle.visibility = View.GONE
+
         return root
     }
 
@@ -104,6 +107,10 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                             val addressLine = address.getAddressLine(0)
                             val district = address.subLocality // Aquí obtenemos el distrito
                             binding.etAddress.setText("$addressLine, $district")
+
+                            // Cambia el tipo de letra del EditText
+                            val typeface = ResourcesCompat.getFont(requireContext(), R.font.quicksand_regular)
+                            binding.etAddress.typeface = typeface
                         }
                     }
                 }

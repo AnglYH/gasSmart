@@ -75,38 +75,11 @@
         android:text="Correo:"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/tv_address_profile"
+        app:layout_constraintBottom_toTopOf="@id/tv_phone_profile"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@id/tv_name" />
-
-    <TextView
-        android:id="@+id/tv_address_profile"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/quicksand_regular"
-        android:text="Dirección"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintTop_toBottomOf="@+id/tv_email"
-        app:layout_constraintBottom_toTopOf="@+id/et_address" />
-
-    <EditText
-        android:id="@+id/et_address"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input_background"
-        android:fontFamily="@font/quicksand_regular"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_phone_profile"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_address_profile" />
 
     <TextView
         android:id="@+id/tv_phone_profile"
@@ -118,7 +91,7 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintTop_toBottomOf="@+id/et_address"
+        app:layout_constraintTop_toBottomOf="@+id/tv_email"
         app:layout_constraintBottom_toTopOf="@+id/et_phone" />
 
     <EditText
