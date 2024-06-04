@@ -34,16 +34,20 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
     // Carga el ID del sensor
     private fun loadSensorData(idSensor: String) {
         viewModelScope.launch {
-            val lecturaList = getLecturasPorSensor(idSensor)
-            val sensorList = getAllSensors()
+            if (idSensor == "0") {
+                // Si el id del sensor es "0", publica el sensor ficticio directamente
+                _sensorData.postValue(Pair(Sensor(id = "0", name = "", user_id = ""), null))
+            } else {
+                // Si el id del sensor no es "0", busca el sensor en la base de datos
+                val lecturaList = getLecturasPorSensor(idSensor)
+                val sensorList = getAllSensors()
 
-            if (lecturaList.isNotEmpty() && sensorList.isNotEmpty()) {
                 val sensor = sensorList.find { it.id == idSensor }
-                val lectura = lecturaList.maxByOrNull { it.fecha_lectura.toString() }
-
-                _sensorData.postValue(Pair(sensor, lectura))
+                if (sensor != null) {
+                    val lectura = lecturaList.maxByOrNull { it.fecha_lectura.toString() }
+                    _sensorData.postValue(Pair(sensor, lectura))
+                }
             }
-
         }
     }
 

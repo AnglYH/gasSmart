@@ -10,6 +10,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_50">#edf1f7</color>
+    <color name="silver">#BFC0C0</color>
     <color name="grey">#4f5d6e</color>
     <color name="grey_200">#2e3143</color>
     <color name="blue_100">#00A8E8</color>

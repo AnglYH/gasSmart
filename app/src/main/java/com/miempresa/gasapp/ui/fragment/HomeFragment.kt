@@ -1,6 +1,7 @@
 package com.miempresa.gasapp.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import com.miempresa.gasapp.adapter.ScreenSlidePagerAdapter
 import com.miempresa.gasapp.databinding.FragmentHomeBinding
 import com.miempresa.gasapp.model.Sensor
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.ui.dialog.PromocionesDialogFragment
@@ -63,18 +67,33 @@ class HomeFragment : Fragment() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val sensorsRef = database.getReference("sensores")
-            sensorsRef.get().addOnSuccessListener { dataSnapshot ->
-                val sensorList = mutableListOf<Sensor>()
-                for (sensorSnapshot in dataSnapshot.children) {
-                    val sensor = sensorSnapshot.getValue(Sensor::class.java)
-                    if (sensor != null && sensor.user_id == userId) {
-                        sensorList.add(sensor)
+            sensorsRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val sensorList = mutableListOf<Sensor>()
+                    for (sensorSnapshot in dataSnapshot.children) {
+                        val sensor = sensorSnapshot.getValue(Sensor::class.java)
+                        sensor?.let {
+                            if (it.user_id == userId) {
+                                sensorList.add(it)
+                            }
+                        }
                     }
+
+                    // Si la lista de sensores está vacía, agrega un sensor ficticio
+                    if (sensorList.isEmpty()) {
+                        userId?.let {
+                            sensorList.add(Sensor(id = "0", name = "No hay sensor registrado", user_id = it))
+                        }
+                    }
+
+                    setupViewPager(sensorList)
                 }
-                setupViewPager(sensorList)
-            }.addOnFailureListener {
-                // Manejar el error
-            }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Manejar el error
+                    Log.d("HomeFragment", "Error al obtener la lista de sensores")
+                }
+            })
         }
     }
 
