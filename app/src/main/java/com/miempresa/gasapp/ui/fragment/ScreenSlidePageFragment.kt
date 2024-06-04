@@ -12,12 +12,11 @@ import com.miempresa.gasapp.databinding.FragmentHomeSlideItemBinding
 import com.miempresa.gasapp.model.Sensor
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
 import androidx.lifecycle.Observer
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.ui.activity.BluetoothPairingActivity
-import kotlin.math.log
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * ScreenSlidePageFragment es responsable de mostrar los detalles de un sensor.
@@ -51,26 +50,42 @@ class ScreenSlidePageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeSlideItemBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+
+        // Hacer el botón invisible por defecto
+        binding.btnAddSensor.visibility = View.INVISIBLE
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel.sensorData.observe(viewLifecycleOwner, Observer { data ->
             val (sensor, lectura) = data
             Log.d("Hola", "Prueba")
             if (sensor?.id == "0") {
                 Log.d("ScreenSlidePageFragment", "No hay sensores registrados")
-                binding.tvSensorCode.text = "No hay sensores"
+                binding.tvSensorCode.text = sensor.name
                 binding.imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.silver))
                 binding.ibtnSensorWifi.setColorFilter(ContextCompat.getColor(requireContext(), R.color.silver))
                 binding.tvPercentage.text = ""
                 binding.tvRemainingDays.text = ""
                 binding.tvDate.text = ""
+                binding.btnAddSensor.visibility = View.VISIBLE
                 // Habilita el botón para registrar un sensor
             } else {
-                // Muestra los datos del sensor
+                // Si no es el sensor ficticio, muestra los detalles del sensor
                 Log.d("ScreenSlidePageFragment", "Mostrando datos del sensor") // Nuevo mensaje de registro
                 binding.tvSensorCode.text = sensor?.name
-                binding.tvDate.text = lectura?.fecha_lectura
-                binding.tvPercentage.text = "${lectura?.porcentaje_gas}%"
+
+                // Parsea la fecha y la formatea
+                val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+                val targetFormat = SimpleDateFormat("dd/MM HH:mm", Locale.US)
+                val date = originalFormat.parse(lectura?.fechaLectura ?: "")
+                val formattedDate = targetFormat.format(date ?: Date())
+
+                binding.tvDate.text = "Última lectura: $formattedDate"
+                binding.tvPercentage.text = "${lectura?.porcentajeGas}%"
             }
         })
 
@@ -78,8 +93,6 @@ class ScreenSlidePageFragment : Fragment() {
             val intent = Intent(context, BluetoothPairingActivity::class.java)
             startActivity(intent)
         }
-
-        return root
     }
 
     override fun onDestroyView() {

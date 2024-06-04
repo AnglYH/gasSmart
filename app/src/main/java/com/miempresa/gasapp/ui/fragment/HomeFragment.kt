@@ -81,18 +81,14 @@ class HomeFragment : Fragment() {
                     for (sensorSnapshot in dataSnapshot.children) {
                         val sensor = sensorSnapshot.getValue(Sensor::class.java)
                         sensor?.let {
-                            if (it.user_id == userId) {
+                            if (it.userId == userId) {
                                 sensorList.add(it)
                             }
                         }
                     }
 
-                    // Si la lista de sensores está vacía, agrega un sensor ficticio
-                    if (sensorList.isEmpty()) {
-                        userId?.let {
-                            sensorList.add(Sensor(id = "0", name = "No hay sensor registrado", user_id = it))
-                        }
-                    }
+                    // Agrega un sensor ficticio al final de la lista
+                    sensorList.add(Sensor(id = "0", name = "Agregar sensor", userId = ""))
 
                     setupViewPager(sensorList)
                 }

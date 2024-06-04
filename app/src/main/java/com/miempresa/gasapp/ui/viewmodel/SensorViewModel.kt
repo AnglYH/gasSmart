@@ -1,22 +1,15 @@
 package com.miempresa.gasapp.ui.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.miempresa.gasapp.data.SensorRepository
 import com.miempresa.gasapp.model.Lectura
 import com.miempresa.gasapp.model.Sensor
-import com.miempresa.gasapp.model.User
-import com.miempresa.gasapp.network.ApiClient
-import com.miempresa.gasapp.network.ApiService
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -40,7 +33,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             if (idSensor == "0") {
                 // Si el id del sensor es "0", publica el sensor ficticio directamente
-                _sensorData.postValue(Pair(Sensor(id = "0", name = "", user_id = ""), null))
+                _sensorData.postValue(Pair(Sensor(id = "0", name = "Registre un sensor", userId = ""), null))
             } else {
                 // Si el id del sensor no es "0", busca el sensor en la base de datos
                 val lecturaList = getLecturasPorSensor(idSensor)
@@ -48,7 +41,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
 
                 val sensor = sensorList.find { it.id == idSensor }
                 if (sensor != null) {
-                    val lectura = lecturaList.maxByOrNull { it.fecha_lectura.toString() }
+                    val lectura = lecturaList.maxByOrNull { it.fechaLectura.toString() }
                     _sensorData.postValue(Pair(sensor, lectura))
                 }
             }
@@ -70,12 +63,16 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
     private suspend fun getLecturasPorSensor(idSensor: String): List<Lectura> {
         val snapshot = lecturasRef.get().await()
         return snapshot.children.mapNotNull { dataSnapshot ->
-            val lectura = dataSnapshot.getValue(Lectura::class.java)
-            // Filtra las lecturas por el ID del sensor
-            if (lectura != null && lectura.sensor_id == idSensor) {
-                lectura.id = dataSnapshot.key?.toLong() // Asigna el ID de la lectura
-                lectura
-            } else {
+            try {
+                val lectura = dataSnapshot.getValue(Lectura::class.java)
+                if (lectura != null && lectura.sensorId == idSensor) {
+                    lectura.id = dataSnapshot.key
+                    lectura
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("Firebase", "Error al deserializar la lectura con ID: ${dataSnapshot.key}", e)
                 null
             }
         }
