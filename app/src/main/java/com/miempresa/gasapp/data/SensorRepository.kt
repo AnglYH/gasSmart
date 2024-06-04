@@ -11,7 +11,7 @@ class SensorRepository {
 
     suspend fun insertSensors(sensors: List<Sensor>) {
         sensors.forEach { sensor ->
-            sensor.idSensor?.let { id ->
+            sensor.id.let { id ->
                 sensorRef.child(id.toString()).setValue(sensor).await()
             }
         }
