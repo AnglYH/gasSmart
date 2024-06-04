@@ -7,5 +7,6 @@ data class Distributor(
     val location: String? = null, // Ubicación del distribuidor en formato "latitud,longitud"
     val address: String? = null, // Dirección del distribuidor
     val latitud: Double? = null, // Latitud del distribuidor
-    val longitud: Double? = null // Longitud del distribuidor
+    val longitud: Double? = null, // Longitud del distribuidor
+    val marca: List<GasBrand>? = null // Lista de marcas de gas
 )
