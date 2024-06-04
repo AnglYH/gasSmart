@@ -23,6 +23,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+
+/**
+ * HomeFragment es responsable de mostrar la pantalla de inicio de la aplicación.
+ * Obtiene la lista de sensores asociados con el usuario actual y configura el visor de páginas.
+ */
+
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -58,11 +64,13 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 
+    // Obtiene el ID de usuario de Firebase.
     private suspend fun obtenerUserId(): String? {
         val snapshot = Firebase.database.getReference("users").child(currentUser?.email!!.replace(".", ",")).get().await()
         return snapshot.child("id").value as String?
     }
 
+    // Obtiene la lista de sensores asociados con el usuario actual de Firebase.
     private fun obtenerListaSensoresUsuario() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -97,6 +105,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // Configura el visor de páginas con la lista de sensores.
     private fun setupViewPager(sensorList: List<Sensor>) {
         val viewPager = binding.pager
         val tabLayout = binding.tabLayout

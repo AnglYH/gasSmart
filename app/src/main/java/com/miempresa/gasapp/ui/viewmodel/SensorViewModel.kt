@@ -22,6 +22,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
 
+/**
+ * SensorViewModel es responsable de preparar y gestionar los datos para las vistas relacionadas con el Sensor.
+ * Maneja la comunicación de la aplicación con la base de datos de Firebase.
+ */
 class SensorViewModel(application: Application) : AndroidViewModel(application) {
     private val _sensorData = MutableLiveData<Pair<Sensor?, Lectura?>>()
     val sensorData: LiveData<Pair<Sensor?, Lectura?>> get() = _sensorData
@@ -31,7 +35,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
     private val sensorsRef = database.getReference("sensores")
     private val lecturasRef = database.getReference("lecturas")
 
-    // Carga el ID del sensor
+    // Obtiene los datos del sensor de Firebase y los publica en _sensorData.
     private fun loadSensorData(idSensor: String) {
         viewModelScope.launch {
             if (idSensor == "0") {
@@ -52,7 +56,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
     }
 
 
-    // Inicia el polling de los datos del sensor
+    // Inicia el polling de los datos del sensor cada 5 segundos.
     fun startPollingSensorData(idSensor: String) {
         viewModelScope.launch {
             while (isActive) {
@@ -62,6 +66,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    // Obtiene la lista de lecturas para un sensor de Firebase.
     private suspend fun getLecturasPorSensor(idSensor: String): List<Lectura> {
         val snapshot = lecturasRef.get().await()
         return snapshot.children.mapNotNull { dataSnapshot ->
@@ -76,6 +81,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    // Obtiene la lista de todos los sensores de Firebase.
     private suspend fun getAllSensors(): List<Sensor> {
         val snapshot = sensorsRef.get().await()
         return snapshot.children.mapNotNull { it.getValue(Sensor::class.java) }

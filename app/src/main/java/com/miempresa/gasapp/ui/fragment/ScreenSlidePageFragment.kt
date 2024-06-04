@@ -19,6 +19,10 @@ import com.miempresa.gasapp.R
 import com.miempresa.gasapp.ui.activity.BluetoothPairingActivity
 import kotlin.math.log
 
+/**
+ * ScreenSlidePageFragment es responsable de mostrar los detalles de un sensor.
+ * Observa los datos del sensor y actualiza la interfaz de usuario en consecuencia.
+ */
 @Suppress("DEPRECATION")
 class ScreenSlidePageFragment : Fragment() {
     private var sensor: Sensor? = null
