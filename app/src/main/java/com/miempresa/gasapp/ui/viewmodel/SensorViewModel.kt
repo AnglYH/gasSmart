@@ -33,7 +33,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             if (idSensor == "0") {
                 // Si el id del sensor es "0", publica el sensor ficticio directamente
-                _sensorData.postValue(Pair(Sensor(id = "0", name = "Registre un sensor", userId = ""), null))
+                _sensorData.postValue(Pair(Sensor(id = "0", name = "No hay un sensor", userId = ""), null))
             } else {
                 // Si el id del sensor no es "0", busca el sensor en la base de datos
                 val lecturaList = getLecturasPorSensor(idSensor)
