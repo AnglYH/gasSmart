@@ -91,8 +91,7 @@ class WifiInputPasswordDialogFragment : DialogFragment() {
                             Log.d("Firebase", "userIdRef: $userIdRef")
 
                             // Lee el ID del usuario de la base de datos
-                            userIdRef.get().addOnSuccessListener { dataSnapshot ->
-                                val userId = dataSnapshot.getValue(String::class.java)
+                            userIdRef.get().addOnSuccessListener { dataSnapshot -> val userId = dataSnapshot.getValue(String::class.java)
                                     Log.d("Firebase", "userId: $userId")
                                 // Escribe los datos del SSID, la contraseña del WiFi y el ID del usuario en el OutputStream
                                 val wifiData = "$userId\n${selectedWifi.SSID}\n$password"
