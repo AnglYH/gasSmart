@@ -2,7 +2,9 @@ package com.miempresa.gasapp.ui.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -20,22 +22,59 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
-import com.miempresa.gasapp.model.RedWifi
 import com.miempresa.gasapp.network.ApiClient
 import com.miempresa.gasapp.network.ApiService
 import com.miempresa.gasapp.ui.activity.SensorWifiActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import java.io.IOException
 
 @Suppress("DEPRECATION")
 class WifiInputPasswordDialogFragment : DialogFragment() {
     private val apiService: ApiService by lazy {
         ApiClient.getClient().create(ApiService::class.java)
     }
+
+    // Define una variable para el modo de prueba
+    private val isTestMode = true
+    private val auth = Firebase.auth
+    private var currentUser = auth.currentUser
+
+    // Función para obtener la cantidad de sensores del usuario
+    private fun getSensorCount(userId: String, onSuccess: (Int) -> Unit) {
+        var sensorCount = 0
+        val database = Firebase.database
+        val sensorsRef = database.getReference("sensores")
+        sensorsRef.get().addOnSuccessListener { dataSnapshot ->
+            for (childSnapshot in dataSnapshot.children) {
+                val sensorUserId = childSnapshot.child("userId").getValue(String::class.java)
+                if (sensorUserId == userId) {
+                    sensorCount++
+                }
+            }
+            onSuccess(sensorCount)
+        }.addOnFailureListener { exception ->
+            Log.e("Firebase", "Error al leer la base de datos", exception)
+        }
+    }
+
+    // Función para obtener el ID del usuario autenticado
+    private suspend fun obtenerUserId(): String? {
+        val snapshot = Firebase.database.getReference("users").child(currentUser?.email!!.replace(".", ",")).get().await()
+        return snapshot.child("id").value as String?
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?) : Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
@@ -69,40 +108,130 @@ class WifiInputPasswordDialogFragment : DialogFragment() {
                             activity.connectToWifi(selectedWifi.wifiSsid.toString(), password)
                         }
 
-                        // Obtén el BluetoothAdapter
-                        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                        // Recupera el ID del usuario desde Firebase
+                        GlobalScope.launch(Dispatchers.IO) {
+                            val userId = obtenerUserId()
 
-                        // Obtén el BluetoothDevice que representa al sensor
-                        // Reemplaza "ESP32GasSmart" con el nombre de tu sensor
-                        val sensorDevice = bluetoothAdapter.bondedDevices.find { it.name == "ESP32GasSmart" }
+                            // Obtiene la cantidad de sensores antes de las acciones con el ESP32
+                            var initialSensorCount = 0
+                            userId?.let {
+                                getSensorCount(it) { count ->
+                                    initialSensorCount = count
+                                }
+                            }
 
-                        sensorDevice?.let { device ->
-                            // Crea un BluetoothSocket y obtén un OutputStream de este
-                            val uuid = device.uuids[0].uuid
-                            val socket = device.createRfcommSocketToServiceRecord(uuid)
-                            socket.connect()
-                            val outputStream = socket.outputStream
+                            if (isTestMode) {
+                                // Si estás en modo de prueba, muestra el ProgressDialog y redirige al usuario a MainActivity después del retraso
+                                withContext(Dispatchers.Main) {
+                                    val progressDialog = ProgressDialog(context)
+                                    progressDialog.setMessage("Vinculando sensor...")
+                                    progressDialog.setCancelable(false)
+                                    progressDialog.show()
 
-                            // Recupera el ID del usuario desde Firebase
-                            val user = FirebaseAuth.getInstance().currentUser
-                            val currentUserEmail = user?.email?.replace(".", ",")
-                            val database = FirebaseDatabase.getInstance()
-                            val userIdRef = database.getReference("users/${currentUserEmail}/id")
-                            Log.d("Firebase", "userIdRef: $userIdRef")
+                                    var finalSensorCount = initialSensorCount
+                                    withTimeoutOrNull(20000) {
+                                        while (isActive && finalSensorCount <= initialSensorCount) {
+                                            delay(1000)  // Espera 1 segundo
 
-                            // Lee el ID del usuario de la base de datos
-                            userIdRef.get().addOnSuccessListener { dataSnapshot -> val userId = dataSnapshot.getValue(String::class.java)
-                                    Log.d("Firebase", "userId: $userId")
-                                // Escribe los datos del SSID, la contraseña del WiFi y el ID del usuario en el OutputStream
-                                val wifiData = "$userId\n${selectedWifi.SSID}\n$password"
-                                outputStream.write(wifiData.toByteArray())
+                                            // Obtiene la cantidad de sensores después de las acciones con el ESP32
+                                            userId?.let {
+                                                getSensorCount(it) { count ->
+                                                    finalSensorCount = count
+                                                }
+                                            }
+                                        }
+                                    }
 
-                                // Cierra el OutputStream y el BluetoothSocket
-                                outputStream.close()
-                                socket.close()
-                            }.addOnFailureListener { exception ->
-                                // Maneja cualquier error que ocurra al leer la base de datos
-                                Log.e("Firebase", "Error al leer la base de datos", exception)
+                                    progressDialog.dismiss()
+
+                                    // Compara las dos cantidades para determinar si la cantidad de sensores ha aumentado
+                                    if (finalSensorCount > initialSensorCount) {
+                                        Toast.makeText(context, "El sensor se ha agregado correctamente", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "Hubo un error al agregar el sensor", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    val intent = Intent(context, MainActivity::class.java)
+                                    startActivity(intent)
+                                }
+                            } else {
+                                // Si no estás en modo de prueba, realiza la conexión al dispositivo Bluetooth
+                                // Obtén el BluetoothAdapter
+                                val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+                                // Obtén el BluetoothDevice que representa al sensor
+                                // Reemplaza "ESP32GasSmart" con el nombre de tu sensor
+                                val sensorDevice = bluetoothAdapter.bondedDevices.find { it.name == "8BitDo Pro 2" }
+
+                                sensorDevice?.let { device ->
+                                    try {
+                                        // Crea un BluetoothSocket y obtén un OutputStream de este
+                                        val uuid = device.uuids[0].uuid
+                                        val socket = device.createRfcommSocketToServiceRecord(uuid)
+                                        socket.connect()
+                                        val outputStream = socket.outputStream
+
+                                        // Lee el ID del usuario de la base de datos
+                                        val database = Firebase.database
+                                        val userIdRef = database.getReference("users/${currentUser?.email!!.replace(".", ",")}/id")
+                                        Log.d("Firebase", "userIdRef: $userIdRef")
+                                        val dataSnapshot = userIdRef.get().await()
+                                        val userId = dataSnapshot.getValue(String::class.java)
+                                        Log.d("Firebase", "userId: $userId")
+                                        // Escribe los datos del SSID, la contraseña del WiFi y el ID del usuario en el OutputStream
+                                        val wifiData = "$userId\n${selectedWifi.SSID}\n$password"
+                                        outputStream.write(wifiData.toByteArray())
+
+                                        // Cierra el OutputStream y el BluetoothSocket
+                                        outputStream.close()
+                                        socket.close()
+
+                                        // Muestra un ProgressDialog
+                                        withContext(Dispatchers.Main) {
+                                            val progressDialog = ProgressDialog(context)
+                                            progressDialog.setMessage("Vinculando sensor ...")
+                                            progressDialog.setCancelable(false)
+                                            progressDialog.show()
+
+                                            var finalSensorCount = initialSensorCount
+                                            withTimeoutOrNull(20000) {
+                                                while (isActive && finalSensorCount <= initialSensorCount) {
+                                                    delay(1000)  // Espera 1 segundo
+
+                                                    // Obtiene la cantidad de sensores después de las acciones con el ESP32
+                                                    userId?.let {
+                                                        getSensorCount(it) { count ->
+                                                            finalSensorCount = count
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            progressDialog.dismiss()
+
+                                            // Obtiene la cantidad de sensores después de las acciones con el ESP32
+                                            userId?.let {
+                                                getSensorCount(it) { finalSensorCount ->
+                                                    // Compara las dos cantidades para determinar si la cantidad de sensores ha aumentado
+                                                    if (finalSensorCount > initialSensorCount) {
+                                                        Toast.makeText(context, "El sensor se ha agregado correctamente", Toast.LENGTH_SHORT).show()
+                                                    } else {
+                                                        Toast.makeText(context, "Hubo un error al agregar el sensor", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+
+                                            val intent = Intent(context, MainActivity::class.java)
+                                            startActivity(intent)
+                                        }
+                                    } catch (e: IOException) {
+                                        // Maneja la excepción si no puedes conectarte al dispositivo Bluetooth
+                                        Log.e("Bluetooth", "Error al conectarse al dispositivo Bluetooth", e)
+                                        withContext(Dispatchers.Main) {
+                                            Toast.makeText(context, "No se pudo conectar al dispositivo Bluetooth", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

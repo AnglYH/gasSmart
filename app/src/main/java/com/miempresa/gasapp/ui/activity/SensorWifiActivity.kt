@@ -88,9 +88,6 @@ class SensorWifiActivity : AppCompatActivity() {
         // Establece un listener para el evento de clic en un elemento de la lista de redes WiFi encontradas
         wifiList!!.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val selectedWifi = receiverWifi?.getWifiList()?.get(position)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Toast.makeText(this, "Seleccionado: ${selectedWifi?.wifiSsid}", Toast.LENGTH_SHORT).show()
-            }
             if (selectedWifi != null) {
                 val passwordWifiDialog = WifiInputPasswordDialogFragment()
 

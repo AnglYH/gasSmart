@@ -78,14 +78,20 @@ class ScreenSlidePageFragment : Fragment() {
                 Log.d("ScreenSlidePageFragment", "Mostrando datos del sensor") // Nuevo mensaje de registro
                 binding.tvSensorCode.text = sensor?.name
 
-                // Parsea la fecha y la formatea
-                val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
-                val targetFormat = SimpleDateFormat("dd/MM HH:mm", Locale.US)
-                val date = originalFormat.parse(lectura?.fechaLectura ?: "")
-                val formattedDate = targetFormat.format(date ?: Date())
+                if (!lectura?.fechaLectura.isNullOrEmpty()) {
+                    // Parsea la fecha y la formatea
+                    val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+                    val targetFormat = SimpleDateFormat("dd/MM HH:mm", Locale.US)
+                    val date = originalFormat.parse(lectura?.fechaLectura ?: "")
+                    val formattedDate = targetFormat.format(date ?: Date())
 
-                binding.tvDate.text = "Última lectura: $formattedDate"
-                binding.tvPercentage.text = "${lectura?.porcentajeGas}%"
+                    binding.tvDate.text = "Última lectura: $formattedDate"
+                    binding.tvPercentage.text = "${lectura?.porcentajeGas}%"
+                } else {
+                    // Si no hay lecturas, establece los TextViews a un estado predeterminado
+                    binding.tvDate.text = ""
+                    binding.tvPercentage.text = ""
+                }
             }
         })
 
