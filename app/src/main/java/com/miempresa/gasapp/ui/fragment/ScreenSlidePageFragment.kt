@@ -33,7 +33,7 @@ class ScreenSlidePageFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         sensor?.let {
-            viewModel.startPollingSensorData(it.id)
+            //viewModel.startPollingSensorDataHome(it.id)
         }
     }
 

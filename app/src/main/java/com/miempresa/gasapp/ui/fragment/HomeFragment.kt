@@ -1,13 +1,19 @@
 package com.miempresa.gasapp.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.material.tabs.TabLayoutMediator
-import com.miempresa.gasapp.adapter.ScreenSlidePagerAdapter
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.miempresa.gasapp.databinding.FragmentHomeBinding
 import com.miempresa.gasapp.model.Sensor
 import com.google.firebase.auth.ktx.auth
@@ -16,18 +22,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.miempresa.gasapp.adapter.SensorListAdapter
 import com.miempresa.gasapp.ui.dialog.PromocionesDialogFragment
+import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-
-
-/**
- * HomeFragment es responsable de mostrar la pantalla de inicio de la aplicación.
- * Obtiene la lista de sensores asociados con el usuario actual y configura el visor de páginas.
- */
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -36,15 +38,41 @@ class HomeFragment : Fragment() {
     private val auth = Firebase.auth
     private val currentUser = auth.currentUser
     private val database = Firebase.database
+    private lateinit var viewModel: SensorViewModel
+    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var snapHelper: PagerSnapHelper
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            binding.tabLayout.selectTab(binding.tabLayout.getTabAt(firstVisibleItemPosition))
+        }
+    }
+    private val tabSelectedListener = object : TabLayout.OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab) {
+            val smoothScroller = CustomLinearSmoothScroller(context!!)
+            smoothScroller.targetPosition = tab.position
+            layoutManager.startSmoothScroll(smoothScroller)
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+        override fun onTabReselected(tab: TabLayout.Tab) {}
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        snapHelper = PagerSnapHelper()
+
+        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
             userId = obtenerUserId()
@@ -52,6 +80,7 @@ class HomeFragment : Fragment() {
                 obtenerListaSensoresUsuario()
             }
         }
+
         return root
     }
 
@@ -59,20 +88,20 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         PromocionesDialogFragment().show(childFragmentManager, "PromocionesDialog")
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    // Obtiene el ID de usuario de Firebase.
     private suspend fun obtenerUserId(): String? {
         val snapshot = Firebase.database.getReference("users").child(currentUser?.email!!.replace(".", ",")).get().await()
         return snapshot.child("id").value as String?
     }
 
-    // Obtiene la lista de sensores asociados con el usuario actual de Firebase.
     private fun obtenerListaSensoresUsuario() {
         val currentUser = auth.currentUser
+
         if (currentUser != null) {
             val sensorsRef = database.getReference("sensores")
             sensorsRef.addValueEventListener(object : ValueEventListener {
@@ -86,37 +115,43 @@ class HomeFragment : Fragment() {
                             }
                         }
                     }
-
-                    // Agrega un sensor ficticio al final de la lista
+                    viewModel.startPollingSensorDataHome(sensorList.map { it.id })
                     sensorList.add(Sensor(id = "0", name = "Agregar sensor", userId = ""))
 
-                    // Verifica si _binding es null antes de llamar a setupViewPager
                     if (_binding != null) {
-                        setupViewPager(sensorList)
+                        setupRecyclerView(sensorList)
                     }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Manejar el error
                     Log.d("HomeFragment", "Error al obtener la lista de sensores")
                 }
             })
         }
     }
 
-    // Configura el visor de páginas con la lista de sensores.
-    private fun setupViewPager(sensorList: List<Sensor>) {
-        val viewPager = binding.pager
-        val tabLayout = binding.tabLayout
+    private fun setupRecyclerView(sensorList: List<Sensor>) {
+        val recyclerView = binding.recyclerView
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = SensorListAdapter(sensorList, layoutInflater, viewModel, this)
 
-        try {
-            val pagerAdapter = ScreenSlidePagerAdapter(this, sensorList)
-            viewPager.adapter = pagerAdapter
-            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                // ...
-            }.attach()
-        } catch (e: IllegalStateException) {
-            // Maneja el error
+        snapHelper.attachToRecyclerView(recyclerView)
+
+        recyclerView.removeOnScrollListener(scrollListener)
+        recyclerView.addOnScrollListener(scrollListener)
+
+        binding.tabLayout.clearOnTabSelectedListeners()
+        binding.tabLayout.addOnTabSelectedListener(tabSelectedListener)
+
+        binding.tabLayout.removeAllTabs()
+        for (i in 0 until sensorList.size) {
+            binding.tabLayout.addTab(binding.tabLayout.newTab())
+        }
+    }
+
+    class CustomLinearSmoothScroller(context: Context) : LinearSmoothScroller(context) {
+        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
+            return 2f / displayMetrics.densityDpi
         }
     }
 }

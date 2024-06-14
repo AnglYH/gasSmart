@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.tasks.await
-
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 /**
  * SensorViewModel es responsable de preparar y gestionar los datos para las vistas relacionadas con el Sensor.
  * Maneja la comunicación de la aplicación con la base de datos de Firebase.
@@ -59,15 +60,28 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // Inicia el polling de los datos del sensor cada 5 segundos.
-    fun startPollingSensorData(idSensor: String) {
+    fun startPollingSensorDataHome(sensorIds: List<String>) {
+        viewModelScope.launch {
+            sensorIds.map { idSensor ->
+                async {
+                    while (isActive) {
+                        loadSensorData(idSensor)
+                        delay(3600000) // Espera 1 hora antes de la próxima solicitud
+                    }
+                }
+            }.awaitAll()
+        }
+    }
+
+    fun startPollingSensorDataAdapter(idSensor: String) {
         viewModelScope.launch {
             while (isActive) {
                 loadSensorData(idSensor)
-                delay(5000) // Espera 5 segundos antes de la próxima solicitud
+                delay(10000)
             }
         }
     }
+
 
     // Obtiene la lista de lecturas para un sensor de Firebase.
     private suspend fun getLecturasPorSensor(idSensor: String): List<Lectura> {
@@ -108,7 +122,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         ) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, "GasApp")
-            .setContentTitle("Advertencia de GasApp")
+            .setContentTitle("Notificación de gas baja")
             .setContentText("El sensor ${sensor.name} tiene un $gasPercentage% de gas restante")
             .setSmallIcon(R.drawable.ic_store_icon)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
