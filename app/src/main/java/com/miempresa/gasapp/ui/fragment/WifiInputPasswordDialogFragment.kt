@@ -47,7 +47,7 @@ class WifiInputPasswordDialogFragment : DialogFragment() {
     }
 
     // Define una variable para el modo de prueba
-    private val isTestMode = true
+    private val isTestMode = false
     private val auth = Firebase.auth
     private var currentUser = auth.currentUser
 
