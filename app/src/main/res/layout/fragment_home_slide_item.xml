@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_semibold"
-        android:text="Registre un sensor"
+        android:text="Sensor"
         android:textColor="@color/blue_400"
         android:textSize="23sp"
         app:layout_constraintEnd_toStartOf="@+id/ibtn_sensor_wifi"
