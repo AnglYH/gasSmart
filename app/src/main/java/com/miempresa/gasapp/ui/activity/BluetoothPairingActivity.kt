@@ -21,7 +21,7 @@ class BluetoothPairingActivity : AppCompatActivity() {
 
     private val REQUEST_ENABLE_BT = 1
     private val REQUEST_DISCOVERABLE_BT = 2
-    private val SENSOR_NAME = "8BitDo Pro 2" // Reemplaza esto con el nombre de tu sensor
+    private val SENSOR_NAME = "ESP32GasSmart" // Reemplaza esto con el nombre de tu sensor
 
     private val MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT = 3
     private val MY_PERMISSIONS_REQUEST_BLUETOOTH_ADMIN = 4

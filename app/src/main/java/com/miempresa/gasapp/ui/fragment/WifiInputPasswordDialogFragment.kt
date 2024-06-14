@@ -161,7 +161,7 @@ class WifiInputPasswordDialogFragment : DialogFragment() {
 
                                 // Obtén el BluetoothDevice que representa al sensor
                                 // Reemplaza "ESP32GasSmart" con el nombre de tu sensor
-                                val sensorDevice = bluetoothAdapter.bondedDevices.find { it.name == "8BitDo Pro 2" }
+                                val sensorDevice = bluetoothAdapter.bondedDevices.find { it.name == "ESP32GasSmart" }
 
                                 sensorDevice?.let { device ->
                                     try {
