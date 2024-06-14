@@ -90,7 +90,10 @@ class HomeFragment : Fragment() {
                     // Agrega un sensor ficticio al final de la lista
                     sensorList.add(Sensor(id = "0", name = "Agregar sensor", userId = ""))
 
-                    setupViewPager(sensorList)
+                    // Verifica si _binding es null antes de llamar a setupViewPager
+                    if (_binding != null) {
+                        setupViewPager(sensorList)
+                    }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {

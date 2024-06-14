@@ -1,28 +1,22 @@
 package com.miempresa.gasapp.ui.fragment
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
+import androidx.core.content.ContextCompat
 import com.miempresa.gasapp.databinding.FragmentHomeSlideItemBinding
 import com.miempresa.gasapp.model.Sensor
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
-import androidx.lifecycle.Observer
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.ui.activity.BluetoothPairingActivity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@Suppress("DEPRECATION")
 class ScreenSlidePageFragment : Fragment() {
     private var sensor: Sensor? = null
     private var _binding: FragmentHomeSlideItemBinding? = null
@@ -87,11 +81,6 @@ class ScreenSlidePageFragment : Fragment() {
 
                     binding.tvDate.text = "Última lectura: $formattedDate"
                     binding.tvPercentage.text = "${lectura?.porcentajeGas}%"
-
-                    val percentage = lectura?.porcentajeGas?.toIntOrNull()
-                    if (sensor != null && percentage != null && percentage <= 0) {
-                        sendNotification(sensor, percentage)
-                    }
                 } else {
                     binding.tvDate.text = ""
                     binding.tvPercentage.text = ""
@@ -108,29 +97,5 @@ class ScreenSlidePageFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun sendNotification(sensor: Sensor, gasPercentage: Int) {
-        // Si ya se envió una notificación para este sensor, no hagas nada
-        if (sensor.notificationSent) return
-
-        val notificationManager = ContextCompat.getSystemService(
-            requireContext(),
-            NotificationManager::class.java
-        ) as NotificationManager
-
-        val notification = NotificationCompat.Builder(requireContext(), "GasApp")
-            .setContentTitle("Advertencia de GasApp")
-            .setContentText("El sensor ${sensor.name} tiene un $gasPercentage% de gas restante")
-            .setSmallIcon(R.drawable.ic_store_icon)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
-
-        // Utiliza el ID del sensor como el ID de la notificación
-        val notificationId = sensor.id.hashCode()
-        notificationManager.notify(notificationId, notification)
-
-        // Marca que ya se envió una notificación para este sensor
-        sensor.notificationSent = true
     }
 }
