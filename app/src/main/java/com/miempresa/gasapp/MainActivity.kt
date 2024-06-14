@@ -1,8 +1,10 @@
 package com.miempresa.gasapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -34,19 +36,51 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        // Guardar datos en SharedPreferences
-        val sharedPreferences = getSharedPreferences("user_info", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("email", intent.getStringExtra("email"))
-        editor.putString("phone", intent.getStringExtra("phone"))
-        editor.apply()
+        val sharedPref = getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE)
+        val hasShownDialog = sharedPref.getBoolean("hasShownDialog", false)
+
+        if (!hasShownDialog) {
+            showNotificationDialog()
+        }
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 
-    private fun saveUserData() {
-
+    private fun showNotificationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Notificaciones")
+            .setMessage("¿Deseas recibir notificaciones de la aplicación?")
+            .setPositiveButton("Sí") { _, _ ->
+                enableNotifications()
+                saveDialogShown()
+            }
+            .setNegativeButton("No") { _, _ ->
+                saveDialogShown()
+            }
+            .show()
     }
 
+    private fun enableNotifications() {
+        val intent = Intent().apply {
+            action = "android.settings.APP_NOTIFICATION_SETTINGS"
+
+            // for Android 5-7
+            putExtra("app_package", packageName)
+            putExtra("app_uid", applicationInfo.uid)
+
+            // for Android 8 and above
+            putExtra("android.provider.extra.APP_PACKAGE", packageName)
+        }
+
+        startActivity(intent)
+    }
+
+    private fun saveDialogShown() {
+        val sharedPref = getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean("hasShownDialog", true)
+            apply()
+        }
+    }
 }
