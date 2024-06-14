@@ -122,6 +122,13 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         val snapshot = sensorsRef.get().await()
         return snapshot.children.mapNotNull { it.getValue(Sensor::class.java) }
     }
+    
+    // Obtiene el ID del sensor asociado a un usuario de Firebase.
+    suspend fun getSensorIdByUserId(userId: String): String? {
+        val allSensors = getAllSensors()
+        val userSensor = allSensors.find { it.userId == userId }
+        return userSensor?.id
+    }
 
     private fun sendNotification(sensor: Sensor, gasPercentage: Int) {
         // Si ya se envió una notificación para este sensor en los últimos 10 segundos, no hagas nada

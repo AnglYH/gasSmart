@@ -18,6 +18,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val greenInstanceId = project.findProperty("GREEN_INSTANCE_ID") as String
+        val greenApiToken = project.findProperty("GREEN_API_TOKEN") as String
+
+        buildConfigField("String", "GREEN_INSTANCE_ID", "\"$greenInstanceId\"")
+        buildConfigField("String", "GREEN_API_TOKEN", "\"$greenApiToken\"")
+
+        buildFeatures {
+            buildConfig = true
+        }
     }
 
     buildTypes {
