@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -82,5 +83,11 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
     private suspend fun getAllSensors(): List<Sensor> {
         val snapshot = sensorsRef.get().await()
         return snapshot.children.mapNotNull { it.getValue(Sensor::class.java) }
+    }
+    // Obtiene el ID del sensor asociado a un usuario de Firebase.
+    suspend fun getSensorIdByUserId(userId: String): String? {
+        val allSensors = getAllSensors()
+        val userSensor = allSensors.find { it.userId == userId }
+        return userSensor?.id
     }
 }

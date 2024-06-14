@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -23,6 +24,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.ktx.auth
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.data.DistributorRepository
 import com.miempresa.gasapp.databinding.FragmentStoreBinding
@@ -39,12 +42,24 @@ import com.miempresa.gasapp.utils.LocationUtils
 import kotlinx.coroutines.launch
 import java.util.Locale
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
+import com.miempresa.gasapp.api.MessageBody
+import com.miempresa.gasapp.api.RetrofitClient
 import com.miempresa.gasapp.model.Purchase
+import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
+import retrofit2.Call
+import retrofit2.Response
 import java.time.LocalDate
 import java.util.UUID
+import com.miempresa.gasapp.BuildConfig
+
 
 
 class StoreFragment : Fragment(), OnMapReadyCallback {
+    // Declarar la variable en el alcance de la clase
+    private var distributorPhone: String? = null
+
+    private lateinit var sensorViewModel: SensorViewModel
 
     private var _binding: FragmentStoreBinding? = null
     private val binding get() = _binding!!
@@ -79,6 +94,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sensorViewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
 
         mapView = view.findViewById(R.id.mapPreview)
         mapView.onCreate(savedInstanceState)
@@ -180,6 +196,9 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                 // Imprimir las marcas en la terminal
                 Log.d("StoreFragment", "Marcas asociadas al distribuidor seleccionado: $brands")
 
+                // Asignar el número de teléfono del distribuidor seleccionado a la variable
+                distributorPhone = distributorsFromDb[position].phone
+
                 // Configurar el ArrayAdapter para el AutoCompleteTextView de las marcas
                 val brandAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList(brands))
                 val brandView = view.findViewById<AutoCompleteTextView>(R.id.et_tank_brand)
@@ -259,19 +278,98 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
             }
         }
         val btnAddTank = view.findViewById<Button>(R.id.btn_add_tank)
+
         btnAddTank.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Confirmar compra")
-                .setMessage("¿Estás seguro de que quieres realizar esta compra?")
-                .setPositiveButton("Sí") { _, _ ->
-                }
-                .setNegativeButton("No", null)
-                .show()
+            lifecycleScope.launch {
+                val user_id = Firebase.auth.currentUser?.uid
+                val sensor_id = user_id?.let { sensorViewModel.getSensorIdByUserId(it) }
+
+                Log.d("StoreFragment", "ID del usuario: $user_id")
+                Log.d("StoreFragment", "ID del sensor: $sensor_id")
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Confirmar compra")
+                    .setMessage("¿Estás seguro de que quieres realizar esta compra?")
+                    .setPositiveButton("Sí") { _, _ ->
+                        val date = LocalDate.now().toString()
+                        val direccion = view.findViewById<EditText>(R.id.et_address).text.toString()
+                        val distributor_Id = view.findViewById<AutoCompleteTextView>(R.id.et_distributor).text.toString()
+                        val id = UUID.randomUUID().toString()
+                        val marca_id = view.findViewById<AutoCompleteTextView>(R.id.et_tank_brand).text.toString()
+                        val peso_balon = view.findViewById<AutoCompleteTextView>(R.id.et_tank_weight).text.toString()
+                        val price = view.findViewById<TextView>(R.id.tv_total).text.toString().removePrefix("Total: S/ ")
+                        val valvula_balon = view.findViewById<AutoCompleteTextView>(R.id.et_valve).text.toString()
+
+                        Log.d("StoreFragment", "Fecha: $date")
+                        Log.d("StoreFragment", "Dirección: $direccion")
+                        Log.d("StoreFragment", "ID del distribuidor: $distributor_Id")
+                        Log.d("StoreFragment", "ID de la compra: $id")
+                        Log.d("StoreFragment", "ID de la marca: $marca_id")
+                        Log.d("StoreFragment", "Peso del balón: $peso_balon")
+                        Log.d("StoreFragment", "Precio: $price")
+                        Log.d("StoreFragment", "ID de la válvula: $valvula_balon")
+
+                        val purchase = Purchase(date, direccion, distributor_Id, id, marca_id, peso_balon, price, sensor_id, user_id, valvula_balon)
+
+                        val database = FirebaseDatabase.getInstance()
+                        val reference = database.getReference("compras")
+                        reference.child(id).setValue(purchase)
+
+                        // Enviar mensaje de WhatsApp
+                        val userPhone = Firebase.auth.currentUser?.phoneNumber
+                        val message = "Nuevo pedido:\n" +
+                                "Fecha: $date\n" +
+                                "Dirección de entrega: $direccion\n" +
+                                "Marca del balón: $marca_id\n" +
+                                "Peso del balón: $peso_balon\n" +
+                                "Tipo de válvula: $valvula_balon\n" +
+                                "Precio: $price\n" +
+                                "Por favor, confirme la recepción de este pedido."
+                        userPhone?.let {
+                            distributorPhone?.let { phone ->
+                                sendWhatsAppMessage(BuildConfig.GREEN_INSTANCE_ID, BuildConfig.GREEN_API_TOKEN, phone, message)
+                            }
+                        }
+                        // Limpiar todos los campos
+
+                        view.findViewById<AutoCompleteTextView>(R.id.et_distributor).setText("")
+                        view.findViewById<AutoCompleteTextView>(R.id.et_tank_brand).setText("")
+                        view.findViewById<AutoCompleteTextView>(R.id.et_tank_weight).setText("")
+                        view.findViewById<AutoCompleteTextView>(R.id.et_valve).setText("")
+                        view.findViewById<TextView>(R.id.tv_total).text = "Total: S/ 0.00"
+                        view.findViewById<TextView>(R.id.textPay).text = "Pagar con:"
+                        yapeButton.setImageResource(R.mipmap.icon_yape_round)
+                        plinButton.setImageResource(R.mipmap.icon_plin_round)
+                        efectivoButton.setImageResource(R.mipmap.icon_cash_round)
+                    }
+                    .setNegativeButton("No", null)
+                    .show()
+            }
         }
     }
 
+    private fun sendWhatsAppMessage(idInstance: String, apiTokenInstance: String, receiverPhoneNumber: String, message: String) {
+        Log.d("GreenAPI", "sendWhatsAppMessage called with idInstance: $idInstance, apiTokenInstance: $apiTokenInstance, receiverPhoneNumber: $receiverPhoneNumber, message: $message")
 
+        val chatId = "$receiverPhoneNumber@c.us"
+        val messageBody = MessageBody(chatId, message)
 
+        val call = RetrofitClient.greenApiService.sendMessage(idInstance, apiTokenInstance, messageBody)
+        Log.d("GreenAPI", "API call created: $call")
+        call.enqueue(object : retrofit2.Callback<Any> {
+            override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                if (response.isSuccessful) {
+                    Log.d("GreenAPI", "Message sent successfully: ${response.body()}")
+                } else {
+                    Log.e("GreenAPI", "Failed to send message: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Any>, t: Throwable) {
+                Log.e("GreenAPI", "Error: ${t.message}")
+            }
+        })
+    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
