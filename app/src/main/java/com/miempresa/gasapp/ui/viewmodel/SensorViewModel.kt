@@ -61,15 +61,30 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun startPollingSensorDataHome(sensorIds: List<String>) {
-        viewModelScope.launch {
-            sensorIds.map { idSensor ->
-                async {
-                    while (isActive) {
-                        loadSensorData(idSensor)
-                        delay(3600000) // Espera 1 hora antes de la próxima solicitud
-                    }
+        if (sensorIds.isNotEmpty()) {
+            val firstSensorId = sensorIds.first()
+            val otherSensorIds = sensorIds.drop(1)
+
+            viewModelScope.launch {
+                // Carga la información del primer sensor
+                while (isActive) {
+                    loadSensorData(firstSensorId)
+                    delay(3600000) // Espera 1 hora antes de la próxima solicitud
                 }
-            }.awaitAll()
+            }
+
+            viewModelScope.launch {
+                delay(500) // Espera un poco antes de cargar los datos de los demás sensores
+                // Carga la información del resto de los sensores en paralelo
+                otherSensorIds.map { idSensor ->
+                    async {
+                        while (isActive) {
+                            loadSensorData(idSensor)
+                            delay(3600000) // Espera 1 hora antes de la próxima solicitud
+                        }
+                    }
+                }.awaitAll()
+            }
         }
     }
 
@@ -77,7 +92,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             while (isActive) {
                 loadSensorData(idSensor)
-                delay(10000)
+                delay(6000)
             }
         }
     }
@@ -122,8 +137,8 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         ) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, "GasApp")
-            .setContentTitle("Notificación de gas baja")
-            .setContentText("El sensor ${sensor.name} tiene un $gasPercentage% de gas restante")
+            .setContentTitle("¡Gas agotandose!")
+            .setContentText("${sensor.name} ha registrado un $gasPercentage% de gas restante")
             .setSmallIcon(R.drawable.ic_store_icon)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
