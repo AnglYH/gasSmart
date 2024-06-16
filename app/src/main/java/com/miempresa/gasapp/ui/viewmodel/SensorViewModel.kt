@@ -3,47 +3,34 @@ package com.miempresa.gasapp.ui.viewmodel
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.R
+import com.miempresa.gasapp.data.SensorRepository
 import com.miempresa.gasapp.model.Lectura
 import com.miempresa.gasapp.model.Sensor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-/**
- * SensorViewModel es responsable de preparar y gestionar los datos para las vistas relacionadas con el Sensor.
- * Maneja la comunicación de la aplicación con la base de datos de Firebase.
- */
-class SensorViewModel(application: Application) : AndroidViewModel(application) {
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+
+class SensorViewModel(application: Application, private val sensorRepository: SensorRepository) : AndroidViewModel(application) {
     private val _sensorData = MutableLiveData<Pair<Sensor?, Lectura?>>()
     val sensorData: LiveData<Pair<Sensor?, Lectura?>> get() = _sensorData
 
-    private val database = Firebase.database
-
-    private val sensorsRef = database.getReference("sensores")
-    private val lecturasRef = database.getReference("lecturas")
-
-    // Obtiene los datos del sensor de Firebase y los publica en _sensorData.
     private fun loadSensorData(idSensor: String) {
         viewModelScope.launch {
             if (idSensor == "0") {
-                // Si el id del sensor es "0", publica el sensor ficticio directamente
                 _sensorData.postValue(Pair(Sensor(id = "0", name = "No hay un sensor", userId = ""), null))
             } else {
-                // Si el id del sensor no es "0", busca el sensor en la base de datos
-                val lecturaList = getLecturasPorSensor(idSensor)
-                val sensorList = getAllSensors()
+                val lecturaList = sensorRepository.getLecturasPorSensor(idSensor)
+                val sensorList = sensorRepository.getAllSensors()
 
                 val sensor = sensorList.find { it.id == idSensor }
                 if (sensor != null) {
@@ -55,7 +42,6 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
                         sendNotification(sensor, percentage)
                     }
                 }
-
             }
         }
     }
@@ -66,24 +52,22 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
             val otherSensorIds = sensorIds.drop(1)
 
             viewModelScope.launch {
-                // Carga la información del primer sensor
                 while (isActive) {
                     loadSensorData(firstSensorId)
-                    delay(3600000) // Espera 1 hora antes de la próxima solicitud
+                    delay(3600000)
                 }
             }
 
             viewModelScope.launch {
-                delay(500) // Espera un poco antes de cargar los datos de los demás sensores
-                // Carga la información del resto de los sensores en paralelo
+                delay(500)
                 otherSensorIds.map { idSensor ->
-                    async {
+                    launch {
                         while (isActive) {
                             loadSensorData(idSensor)
-                            delay(3600000) // Espera 1 hora antes de la próxima solicitud
+                            delay(3600000)
                         }
                     }
-                }.awaitAll()
+                }
             }
         }
     }
@@ -97,44 +81,82 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-
-    // Obtiene la lista de lecturas para un sensor de Firebase.
-    private suspend fun getLecturasPorSensor(idSensor: String): List<Lectura> {
-        val snapshot = lecturasRef.get().await()
-        return snapshot.children.mapNotNull { dataSnapshot ->
-            try {
-                val lectura = dataSnapshot.getValue(Lectura::class.java)
-                if (lectura != null && lectura.sensorId == idSensor) {
-                    lectura.id = dataSnapshot.key
-                    lectura
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                Log.e("Firebase", "Error al deserializar la lectura con ID: ${dataSnapshot.key}", e)
-                null
-            }
-        }
-    }
-
-    // Obtiene la lista de todos los sensores de Firebase.
-    private suspend fun getAllSensors(): List<Sensor> {
-        val snapshot = sensorsRef.get().await()
-        return snapshot.children.mapNotNull { it.getValue(Sensor::class.java) }
-    }
-    
-    // Obtiene el ID del sensor asociado a un usuario de Firebase.
     suspend fun getSensorIdByUserId(userId: String): String? {
-        val allSensors = getAllSensors()
-        val userSensor = allSensors.find { it.userId == userId }
-        return userSensor?.id
+        val sensors = sensorRepository.getAllSensors()
+        return sensors.find { it.userId == userId }?.id
+    }
+
+    suspend fun getAverageChangeRate(sensorId: String): Float {
+        val lecturas = sensorRepository.getLecturasPorSensor(sensorId)
+        if (lecturas.size < 2) return 0f
+
+        val sortedLecturas = lecturas.sortedByDescending { it.fechaLectura }
+        val filteredLecturas = mutableListOf<Lectura>()
+
+        for (i in 0 until sortedLecturas.size - 1) {
+            val lectura1 = sortedLecturas[i]
+            val lectura2 = sortedLecturas[i + 1]
+
+            val porcentajeGas1 = lectura1.porcentajeGas?.toFloatOrNull()
+            val porcentajeGas2 = lectura2.porcentajeGas?.toFloatOrNull()
+
+            if (porcentajeGas1 != null && porcentajeGas2 != null && porcentajeGas2 < porcentajeGas1) {
+                filteredLecturas.add(lectura1)
+                break
+            }
+
+            filteredLecturas.add(lectura1)
+        }
+
+        val finalLecturas = filteredLecturas.sortedBy { it.fechaLectura }
+        //val changeRates = mutableListOf<Float>()
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US) // Ajusta este formato a tu necesidad
+
+        val lecturaReciente = finalLecturas[finalLecturas.size - 1]
+        val lecturaInicio = finalLecturas[0]
+
+        if (lecturaReciente == lecturaInicio)
+            return 30f
+
+        val date1 = lecturaReciente.fechaLectura?.let { format.parse(it) }
+        val date2 = lecturaInicio.fechaLectura?.let { format.parse(it) }
+
+        val porcentajeReciente = lecturaReciente.porcentajeGas?.toFloatOrNull()
+        val porcentajeInicio = lecturaInicio.porcentajeGas?.toFloatOrNull()
+
+        val porcentajeConsumido = porcentajeInicio?.minus(porcentajeReciente!!)
+
+        var diasRestantes = 0f
+        if (date1 != null && date2 != null && porcentajeReciente != null && porcentajeConsumido != null) {
+            val diffInMilliseconds = date1.time - date2.time
+            val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMilliseconds)
+            diasRestantes = (porcentajeReciente.times(diffInDays.toFloat()) / porcentajeConsumido).takeIf { it.isFinite() } ?: 0f
+        }
+
+        return diasRestantes
+        /*for (i in 0 until finalLecturas.size - 1) {
+            val lectura1 = finalLecturas[i]
+            val lectura2 = finalLecturas[i + 1]
+
+            val date1 = lectura1.fechaLectura?.let { format.parse(it) }
+            val date2 = lectura2.fechaLectura?.let { format.parse(it) }
+
+            if (date1 != null && date2 != null) {
+                val diffInMilliseconds = date1.time - date2.time
+                val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMilliseconds)
+
+                if (diffInDays != 0L) {
+                    val changeRate = (lectura2.porcentajeGas!!.toFloat() - lectura1.porcentajeGas!!.toFloat()) / diffInDays
+                    changeRates.add(changeRate)
+                }
+            }
+        }*/
     }
 
     private fun sendNotification(sensor: Sensor, gasPercentage: Int) {
-        // Si ya se envió una notificación para este sensor en los últimos 10 segundos, no hagas nada
         val currentTime = System.currentTimeMillis()
         val lastNotificationTime = getLastNotificationTime(sensor.id)
-        //if (currentTime - lastNotificationTime < 10 * 1000) return
         if (currentTime - lastNotificationTime < 60 * 60 * 1000) return
 
         val context = getApplication<Application>().applicationContext
@@ -150,11 +172,9 @@ class SensorViewModel(application: Application) : AndroidViewModel(application) 
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
-        // Utiliza el ID del sensor como el ID de la notificación
         val notificationId = sensor.id.hashCode()
         notificationManager.notify(notificationId, notification)
 
-        // Guarda la hora actual como la hora de la última notificación para este sensor
         saveLastNotificationTime(sensor.id, currentTime)
     }
 
