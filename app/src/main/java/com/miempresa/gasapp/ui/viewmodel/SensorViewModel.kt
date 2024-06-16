@@ -1,14 +1,19 @@
 package com.miempresa.gasapp.ui.viewmodel
 
 import android.app.Application
+import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.data.SensorRepository
 import com.miempresa.gasapp.model.Lectura
@@ -76,7 +81,7 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
         viewModelScope.launch {
             while (isActive) {
                 loadSensorData(idSensor)
-                delay(6000)
+                delay(5000)
             }
         }
     }
@@ -157,6 +162,7 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
     private fun sendNotification(sensor: Sensor, gasPercentage: Int) {
         val currentTime = System.currentTimeMillis()
         val lastNotificationTime = getLastNotificationTime(sensor.id)
+        //if (currentTime - lastNotificationTime < 10 * 1000) return
         if (currentTime - lastNotificationTime < 60 * 60 * 1000) return
 
         val context = getApplication<Application>().applicationContext
@@ -165,11 +171,33 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
             NotificationManager::class.java
         ) as NotificationManager
 
-        val notification = NotificationCompat.Builder(context, "GasApp")
-            .setContentTitle("¡Gas agotandose!")
-            .setContentText("${sensor.name} ha registrado un $gasPercentage% de gas restante")
+        // Define el ID del canal de notificación aquí
+        val channelId = "GasApp_Channel"
+
+        // Crea un canal de notificación
+        val name = "GasApp Channel"
+        val descriptionText = "Channel for GasApp notifications"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelId, name, importance).apply {
+            description = descriptionText
+        }
+        notificationManager.createNotificationChannel(channel)
+
+        // Crea un intent para el toque de notificación
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE)
+
+        val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_store_icon)
+            .setContentTitle("¡El gas se agota!")
+            .setContentText("El sensor ${sensor.name} tiene un $gasPercentage% de gas restante")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent) // Establece el intent que se dispara cuando el usuario toca la notificación
+            .setAutoCancel(true) // Elimina automáticamente la notificación cuando el usuario la toca
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // Establece la visibilidad de la notificación
             .build()
 
         val notificationId = sensor.id.hashCode()
