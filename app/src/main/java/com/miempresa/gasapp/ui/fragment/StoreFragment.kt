@@ -52,9 +52,9 @@ import retrofit2.Response
 import java.time.LocalDate
 import java.util.UUID
 import com.miempresa.gasapp.BuildConfig
+import com.miempresa.gasapp.data.SensorManager
 import com.miempresa.gasapp.data.SensorRepository
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModelFactory
-
 
 class StoreFragment : Fragment(), OnMapReadyCallback {
     // Declarar la variable en el alcance de la clase
@@ -67,6 +67,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var paymentMethod: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -150,11 +151,13 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
         val plinButton = view.findViewById<ImageButton>(R.id.plin)
         val efectivoButton = view.findViewById<ImageButton>(R.id.efectivo)
 
+
         yapeButton.setOnClickListener {
             yapeButton.setImageResource(R.mipmap.icon_yape_round)
             plinButton.setImageResource(R.mipmap.icon_plin_round)
             efectivoButton.setImageResource(R.mipmap.icon_cash_round)
             paymentTextView.text = "Pagar con: Yape"
+            paymentMethod = "Yape"
         }
 
         plinButton.setOnClickListener {
@@ -162,6 +165,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
             plinButton.setImageResource(R.mipmap.icon_plin_round)
             efectivoButton.setImageResource(R.mipmap.icon_cash_round)
             paymentTextView.text = "Pagar con: Plin"
+            paymentMethod = "Plin"
         }
 
         efectivoButton.setOnClickListener {
@@ -169,6 +173,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
             plinButton.setImageResource(R.mipmap.icon_plin_round)
             efectivoButton.setImageResource(R.mipmap.icon_cash_round)
             paymentTextView.text = "Pagar con: Efectivo"
+            paymentMethod = "Efectivo"
         }
 
 
@@ -318,6 +323,22 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                         val reference = database.getReference("compras")
                         reference.child(id).setValue(purchase)
 
+                        // Obtén el ID de la compra que acabas de agregar a la base de datos
+                        val newPurchaseId = id
+
+                        // Instanciar SensorManager
+                        val sensorManager = SensorManager()
+
+                        // Actualizar el ID de la compra en la colección de sensores
+                        sensor_id?.let { sensorId ->
+                            sensorManager.updateSensorWithPurchase(sensorId, newPurchaseId)
+
+                            // Mostrar en un log el ID que se está insertando
+                            Log.d("StoreFragment", "Insertando ID de compra en la base de datos: $newPurchaseId")
+                        }
+
+
+
                         // Enviar mensaje de WhatsApp
                         val userPhone = Firebase.auth.currentUser?.phoneNumber
                         val message = "Nuevo pedido:\n" +
@@ -327,6 +348,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                                 "Peso del balón: $peso_balon\n" +
                                 "Tipo de válvula: $valvula_balon\n" +
                                 "Precio: $price\n" +
+                                "Método de pago: $paymentMethod\n" +
                                 "Por favor, confirme la recepción de este pedido."
                         userPhone?.let {
                             distributorPhone?.let { phone ->
