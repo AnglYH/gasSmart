@@ -12,12 +12,6 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.miempresa.gasapp.ui.fragment.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
-
-    <fragment
         android:id="@+id/navigation_store"
         android:name="com.miempresa.gasapp.ui.fragment.StoreFragment"
         android:label="@string/title_store"
