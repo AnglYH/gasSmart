@@ -23,8 +23,10 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.miempresa.gasapp.adapter.SensorListAdapter
+import com.miempresa.gasapp.data.SensorRepository
 import com.miempresa.gasapp.ui.dialog.PromocionesDialogFragment
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
+import com.miempresa.gasapp.ui.viewmodel.SensorViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,7 +74,10 @@ class HomeFragment : Fragment() {
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         snapHelper = PagerSnapHelper()
 
-        viewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
+        // ...
+        val sensorRepository = SensorRepository()
+        val viewModelFactory = SensorViewModelFactory(requireActivity().application, sensorRepository)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SensorViewModel::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
             userId = obtenerUserId()
@@ -118,8 +123,9 @@ class HomeFragment : Fragment() {
                     viewModel.startPollingSensorDataHome(sensorList.map { it.id })
                     sensorList.add(Sensor(id = "0", name = "Agregar sensor", userId = ""))
 
-                    if (_binding != null) {
-                        setupRecyclerView(sensorList)
+                    // Check if _binding is null before using it
+                    _binding?.let { binding ->
+                        setupRecyclerView(sensorList, binding)
                     }
                 }
 
@@ -130,7 +136,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(sensorList: List<Sensor>) {
+    private fun setupRecyclerView(sensorList: List<Sensor>, binding: FragmentHomeBinding) {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = SensorListAdapter(sensorList, layoutInflater, viewModel, this)
@@ -141,17 +147,27 @@ class HomeFragment : Fragment() {
         recyclerView.addOnScrollListener(scrollListener)
 
         binding.tabLayout.clearOnTabSelectedListeners()
-        binding.tabLayout.addOnTabSelectedListener(tabSelectedListener)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val smoothScroller = CustomLinearSmoothScroller(context!!)
+                smoothScroller.targetPosition = tab.position
+                recyclerView.layoutManager?.startSmoothScroll(smoothScroller)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
 
         binding.tabLayout.removeAllTabs()
-        for (i in 0 until sensorList.size) {
+        for (i in sensorList.indices) {
             binding.tabLayout.addTab(binding.tabLayout.newTab())
         }
     }
 
     class CustomLinearSmoothScroller(context: Context) : LinearSmoothScroller(context) {
         override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
-            return 2f / displayMetrics.densityDpi
+            return 0.5f / displayMetrics.densityDpi
         }
     }
 }

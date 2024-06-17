@@ -7,12 +7,16 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.miempresa.gasapp.R
 import com.miempresa.gasapp.databinding.FragmentHomeSlideItemBinding
 import com.miempresa.gasapp.model.Sensor
 import com.miempresa.gasapp.ui.activity.BluetoothPairingActivity
 import com.miempresa.gasapp.ui.viewmodel.SensorViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -77,11 +81,20 @@ class SensorListAdapter(
                         val date = originalFormat.parse(lectura?.fechaLectura ?: "")
                         val formattedDate = targetFormat.format(date ?: Date())
 
+                        // Calcular los días restantes
+                        fragment.viewLifecycleOwner.lifecycleScope.launch {
+                            val remainingDays = withContext(Dispatchers.IO) {
+                                viewModel.getAverageChangeRate(sensorData.id) // Ajusta el segundo parámetro a tu necesidad
+                            }
+                            holder.binding.tvRemainingDays.text = "Días restantes: ${remainingDays.toInt()}"
+                        }
+
                         holder.binding.tvDate.text = "Última lectura: $formattedDate"
                         holder.binding.tvPercentage.text = "${lectura?.porcentajeGas}%"
                     } else {
                         holder.binding.tvDate.text = ""
                         holder.binding.tvPercentage.text = ""
+                        holder.binding.tvRemainingDays.text = ""
                     }
                 }
             }

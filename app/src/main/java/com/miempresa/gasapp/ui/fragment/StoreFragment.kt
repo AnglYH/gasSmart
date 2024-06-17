@@ -53,7 +53,8 @@ import java.time.LocalDate
 import java.util.UUID
 import com.miempresa.gasapp.BuildConfig
 import com.miempresa.gasapp.data.SensorManager
-
+import com.miempresa.gasapp.data.SensorRepository
+import com.miempresa.gasapp.ui.viewmodel.SensorViewModelFactory
 
 class StoreFragment : Fragment(), OnMapReadyCallback {
     // Declarar la variable en el alcance de la clase
@@ -67,7 +68,6 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var paymentMethod: String? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -95,7 +95,10 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sensorViewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
+
+        val sensorRepository = SensorRepository()
+        val sensorViewModelFactory = SensorViewModelFactory(requireActivity().application, sensorRepository)
+        sensorViewModel = ViewModelProvider(this, sensorViewModelFactory).get(SensorViewModel::class.java)
 
         mapView = view.findViewById(R.id.mapPreview)
         mapView.onCreate(savedInstanceState)
