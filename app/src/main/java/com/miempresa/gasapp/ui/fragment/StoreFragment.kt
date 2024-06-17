@@ -52,7 +52,8 @@ import retrofit2.Response
 import java.time.LocalDate
 import java.util.UUID
 import com.miempresa.gasapp.BuildConfig
-
+import com.miempresa.gasapp.data.SensorRepository
+import com.miempresa.gasapp.ui.viewmodel.SensorViewModelFactory
 
 
 class StoreFragment : Fragment(), OnMapReadyCallback {
@@ -66,7 +67,6 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,7 +94,10 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sensorViewModel = ViewModelProvider(this).get(SensorViewModel::class.java)
+
+        val sensorRepository = SensorRepository()
+        val sensorViewModelFactory = SensorViewModelFactory(requireActivity().application, sensorRepository)
+        sensorViewModel = ViewModelProvider(this, sensorViewModelFactory).get(SensorViewModel::class.java)
 
         mapView = view.findViewById(R.id.mapPreview)
         mapView.onCreate(savedInstanceState)
