@@ -147,17 +147,27 @@ class HomeFragment : Fragment() {
         recyclerView.addOnScrollListener(scrollListener)
 
         binding.tabLayout.clearOnTabSelectedListeners()
-        binding.tabLayout.addOnTabSelectedListener(tabSelectedListener)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val smoothScroller = CustomLinearSmoothScroller(context!!)
+                smoothScroller.targetPosition = tab.position
+                recyclerView.layoutManager?.startSmoothScroll(smoothScroller)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
 
         binding.tabLayout.removeAllTabs()
-        for (i in 0 until sensorList.size) {
+        for (i in sensorList.indices) {
             binding.tabLayout.addTab(binding.tabLayout.newTab())
         }
     }
 
     class CustomLinearSmoothScroller(context: Context) : LinearSmoothScroller(context) {
         override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
-            return 2f / displayMetrics.densityDpi
+            return 0.5f / displayMetrics.densityDpi
         }
     }
 }
