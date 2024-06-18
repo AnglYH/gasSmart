@@ -5,108 +5,148 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_50"
-    android:paddingHorizontal="20dp"
     android:paddingBottom="0dp">
 
-    <TextView
-        android:id="@+id/tv_sensor_code"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/quicksand_semibold"
-        android:text="Sensor"
-        android:textColor="@color/blue_400"
-        android:textSize="23sp"
-        app:layout_constraintEnd_toStartOf="@+id/ibtn_sensor_wifi"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/imageView" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
 
-    <ImageButton
-        android:id="@+id/ibtn_sensor_wifi"
-        android:layout_width="49dp"
-        android:layout_height="49dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_sensor_code"
-        app:srcCompat="@drawable/ic_wifi_on_24dp"
-        app:layout_constraintVertical_chainStyle="spread"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.02" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.91" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintWidth_percent="0.5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sensor_code"
-        app:layout_constraintBottom_toTopOf="@+id/tv_percentage"
-        app:srcCompat="@drawable/ic_gas_tank_img"
-        app:tint="@color/blue_100" />
+        android:background="@drawable/rounded_background"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+        android:paddingHorizontal="10dp">
 
-    <TextView
-        android:id="@+id/tv_percentage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/quicksand_regular"
-        android:gravity="center_horizontal"
-        android:text=""
-        android:textColor="@color/blue_400"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_remaining_days"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        <TextView
+            android:id="@+id/tv_sensor_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_semibold"
+            android:text="Sensor"
+            android:textColor="@color/blue_400"
+            android:textSize="23sp"
+            app:layout_constraintEnd_toStartOf="@+id/ibtn_sensor_wifi"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/imageView" />
 
-    <TextView
-        android:id="@+id/tv_remaining_days"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/quicksand_regular"
-        android:gravity="center_horizontal"
-        android:text=""
-        android:textColor="@color/blue_400"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_percentage"
-        app:layout_constraintBottom_toTopOf="@+id/tv_date" />
+        <ImageButton
+            android:id="@+id/ibtn_sensor_wifi"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_sensor_code"
+            app:srcCompat="@drawable/ic_wifi_on_24dp"
+            app:layout_constraintVertical_chainStyle="spread"/>
 
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/quicksand_regular"
-        android:gravity="center_horizontal"
-        android:text=""
-        android:textColor="@color/blue_400"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_remaining_days"
-        app:layout_constraintBottom_toTopOf="@+id/btn_add_sensor" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_sensor_code"
+            app:layout_constraintBottom_toTopOf="@+id/tv_percentage"
+            app:srcCompat="@drawable/ic_gas_tank_img"
+            app:tint="@color/blue_100" />
 
-    <Button
-        android:id="@+id/btn_add_sensor"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center"
-        app:layout_constraintHeight_percent="0.11"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:text="Registrar sensor"
-        android:theme="@style/Button.Custom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_date"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <TextView
+            android:id="@+id/tv_percentage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_regular"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textColor="@color/blue_400"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_remaining_days"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/tv_remaining_days"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_regular"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textColor="@color/blue_400"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_percentage"
+            app:layout_constraintBottom_toTopOf="@+id/tv_date" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_regular"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textColor="@color/blue_400"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_remaining_days"
+            app:layout_constraintBottom_toTopOf="@+id/btn_add_sensor" />
+
+        <Button
+            android:id="@+id/btn_add_sensor"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            app:layout_constraintHeight_percent="0.11"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:text="Registrar sensor"
+            android:theme="@style/Button.Custom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_date"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
