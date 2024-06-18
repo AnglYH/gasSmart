@@ -86,53 +86,23 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_regular"
-        android:text="Teléfono"
+        android:text="Teléfono:"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintBottom_toTopOf="@+id/space_1"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintTop_toBottomOf="@+id/tv_email"
-        app:layout_constraintBottom_toTopOf="@+id/et_phone" />
-
-    <EditText
-        android:id="@+id/et_phone"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input_background"
-        android:fontFamily="@font/quicksand_regular"
-        android:textSize="16sp"
-        app:layout_constraintVertical_weight="1"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_phone_profile"
-        app:layout_constraintBottom_toTopOf="@id/space_1" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_email" />
 
     <Space
         android:id="@+id/space_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.28"
-        app:layout_constraintTop_toBottomOf="@+id/et_phone"
-        app:layout_constraintBottom_toTopOf="@+id/btn_apply_changes"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintHorizontal_bias="0.5" />
-
-    <Button
-        android:id="@+id/btn_apply_changes"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:insetLeft="10dp"
-        android:insetRight="10dp"
-        android:text="Guardar cambios"
-        android:theme="@style/Button.Custom"
         app:layout_constraintBottom_toTopOf="@+id/btn_log_out"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintVertical_bias="0.88" />
+        app:layout_constraintHeight_percent="0.28"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/guideline_start" />
 
     <Button
         android:id="@+id/btn_log_out"

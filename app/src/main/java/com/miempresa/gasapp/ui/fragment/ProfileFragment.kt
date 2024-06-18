@@ -42,7 +42,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        return binding.root
+        return root
     }
 
     override fun onDestroyView() {
@@ -55,41 +55,14 @@ class ProfileFragment : Fragment() {
         _binding?.let { binding ->
             binding.tvName.text = "Nombre: $nombre"
             binding.tvEmail.text = "Correo: $email"
-            binding.etPhone.text = phone?.let { Editable.Factory.getInstance().newEditable(it) }
+            binding.tvPhoneProfile.text = "Teléfono: $phone"
 
             binding.btnLogOut.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()
                 val loginIntent = Intent(activity, LoginActivity::class.java)
                 startActivity(loginIntent)
-            }
-
-            binding.btnApplyChanges.setOnClickListener {
-                val newPhone = binding.etPhone.text.toString().trim()
-
-                // Validate new phone number
-                if (isValidPhone(newPhone)) {
-                    val currentUser = auth.currentUser
-                    if (currentUser != null) {
-                        // Update phone number in Firebase database
-                        val userRef = database.getReference("users").child(currentUser.email!!.replace(".", ","))
-                        userRef.child("phone").setValue(newPhone).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // Show success message
-                                Toast.makeText(activity, "Información actualizada exitosamente", Toast.LENGTH_SHORT).show()
-                            } else {
-                                // Show error message
-                                Toast.makeText(activity, "Error al actualizar la información", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                } else {
-                    // Show error message
-                    Toast.makeText(activity, "Por favor, ingresa un número de teléfono válido", Toast.LENGTH_SHORT).show()
-                }
+                activity?.finish()
             }
         }
-    }
-    private fun isValidPhone(phone: String): Boolean {
-        return phone.length == 9 && phone.matches(Regex("\\d+"))
     }
 }
