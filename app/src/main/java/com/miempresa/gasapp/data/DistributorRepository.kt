@@ -11,7 +11,7 @@ class DistributorRepository {
 
     suspend fun insertDistributors(distributors: List<Distributor>) {
         distributors.forEach { distributor ->
-            distributor.distributorId?.let { id ->
+            distributor.id?.let { id ->
                 distributorRef.child(id).setValue(distributor).await()
             }
         }

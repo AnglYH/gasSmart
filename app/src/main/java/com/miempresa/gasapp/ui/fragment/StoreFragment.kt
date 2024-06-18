@@ -59,6 +59,7 @@ import com.miempresa.gasapp.ui.viewmodel.SensorViewModelFactory
 class StoreFragment : Fragment(), OnMapReadyCallback {
     // Declarar la variable en el alcance de la clase
     private var distributorPhone: String? = null
+    private var distribuidorId: String? = null
 
     private lateinit var sensorViewModel: SensorViewModel
 
@@ -182,6 +183,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
         lifecycleScope.launch {
             val distributorsFromDb = repository.getAllDistributors()
+            val marcasFromDb = distributorsFromDb.mapNotNull { it.marca?.mapNotNull { it.nombre } }.flatten()
             val distributorNames = distributorsFromDb.map { it.name }
 
             // Configurar el ArrayAdapter para el AutoCompleteTextView
@@ -200,6 +202,8 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                 val selectedDistributor = distributorsFromDb[position]
                 // Recuperar las marcas asociadas al distribuidor seleccionado
                 val brands = selectedDistributor.marca?.filterNotNull()?.map { it.nombre } ?: emptyList()
+
+                distribuidorId = selectedDistributor.id
 
                 // Imprimir las marcas en la terminal
                 Log.d("StoreFragment", "Marcas asociadas al distribuidor seleccionado: $brands")
@@ -223,6 +227,9 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                 brandView.onItemClickListener = AdapterView.OnItemClickListener { _, _, brandPosition, _ ->
                     // Recuperar la marca seleccionada
                     val selectedBrand = selectedDistributor.marca?.filterNotNull()?.get(brandPosition)
+
+                    // Obtener el id de la marca
+                    val brandId = selectedBrand?.id
 
                     // Recuperar los tipos de válvulas asociados a la marca seleccionada
                     val valves = selectedBrand?.valvula?.keys?.toList() ?: emptyList()
@@ -301,7 +308,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                     .setPositiveButton("Sí") { _, _ ->
                         val date = LocalDate.now().toString()
                         val direccion = view.findViewById<EditText>(R.id.et_address).text.toString()
-                        val distributor_Id = view.findViewById<AutoCompleteTextView>(R.id.et_distributor).text.toString()
+                        //val distributor_Id = distribuidorId
                         val id = UUID.randomUUID().toString()
                         val marca_id = view.findViewById<AutoCompleteTextView>(R.id.et_tank_brand).text.toString()
                         val peso_balon = view.findViewById<AutoCompleteTextView>(R.id.et_tank_weight).text.toString()
@@ -310,14 +317,14 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
                         Log.d("StoreFragment", "Fecha: $date")
                         Log.d("StoreFragment", "Dirección: $direccion")
-                        Log.d("StoreFragment", "ID del distribuidor: $distributor_Id")
+                        //Log.d("StoreFragment", "ID del distribuidor: $distributor_Id")
                         Log.d("StoreFragment", "ID de la compra: $id")
                         Log.d("StoreFragment", "ID de la marca: $marca_id")
                         Log.d("StoreFragment", "Peso del balón: $peso_balon")
                         Log.d("StoreFragment", "Precio: $price")
                         Log.d("StoreFragment", "ID de la válvula: $valvula_balon")
 
-                        val purchase = Purchase(date, direccion, distributor_Id, id, marca_id, peso_balon, price, sensor_id, user_id, valvula_balon)
+                        val purchase = Purchase(date, direccion, distribuidorId.toString(), id, marca_id, peso_balon, price, sensor_id, user_id, valvula_balon)
 
                         val database = FirebaseDatabase.getInstance()
                         val reference = database.getReference("compras")

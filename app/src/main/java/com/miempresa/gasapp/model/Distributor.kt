@@ -1,7 +1,7 @@
 package com.miempresa.gasapp.model
 
 data class Distributor(
-    val distributorId: String? = null, // ID único del distribuidor
+    val id: String? = null, // ID único del distribuidor
     val name: String? = null, // Nombre del distribuidor
     val phone: String? = null, // Número de teléfono del distribuidor
     val location: String? = null, // Ubicación del distribuidor en formato "latitud,longitud"
