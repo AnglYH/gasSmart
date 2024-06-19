@@ -93,8 +93,6 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
 
     suspend fun getAverageChangeRate(sensorId: String): Float {
         val lecturas = sensorRepository.getLecturasPorSensor(sensorId)
-        if (lecturas.size < 2) return 0f
-
         val sortedLecturas = lecturas.sortedByDescending { it.fechaLectura }
         val filteredLecturas = mutableListOf<Lectura>()
 
@@ -114,6 +112,10 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
         }
 
         val finalLecturas = filteredLecturas.sortedBy { it.fechaLectura }
+
+        if (finalLecturas.size == 1 && finalLecturas[0].porcentajeGas == "100") {
+            return 30f
+        }
 
         val changeRates = mutableListOf<Float>()
 
