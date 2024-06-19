@@ -98,9 +98,9 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
         val sortedLecturas = lecturas.sortedByDescending { it.fechaLectura }
         val filteredLecturas = mutableListOf<Lectura>()
 
-        for (i in 0 until sortedLecturas.size - 1) {
+        for (i in sortedLecturas.indices) {
             val lectura1 = sortedLecturas[i]
-            val lectura2 = sortedLecturas[i + 1]
+            val lectura2 = sortedLecturas.getOrNull(i + 1) ?: Lectura(porcentajeGas = "0")
 
             val porcentajeGas1 = lectura1.porcentajeGas?.toFloatOrNull()
             val porcentajeGas2 = lectura2.porcentajeGas?.toFloatOrNull()
@@ -114,49 +114,28 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
         }
 
         val finalLecturas = filteredLecturas.sortedBy { it.fechaLectura }
-        //val changeRates = mutableListOf<Float>()
 
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US) // Ajusta este formato a tu necesidad
+        val changeRates = mutableListOf<Float>()
 
-        val lecturaReciente = finalLecturas[finalLecturas.size - 1]
-        val lecturaInicio = finalLecturas[0]
-
-        if (lecturaReciente == lecturaInicio)
-            return 30f
-
-        val date1 = lecturaReciente.fechaLectura?.let { format.parse(it) }
-        val date2 = lecturaInicio.fechaLectura?.let { format.parse(it) }
-
-        val porcentajeReciente = lecturaReciente.porcentajeGas?.toFloatOrNull()
-        val porcentajeInicio = lecturaInicio.porcentajeGas?.toFloatOrNull()
-
-        val porcentajeConsumido = porcentajeInicio?.minus(porcentajeReciente!!)
-
-        var diasRestantes = 0f
-        if (date1 != null && date2 != null && porcentajeReciente != null && porcentajeConsumido != null) {
-            val diffInMilliseconds = date1.time - date2.time
-            val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMilliseconds)
-            diasRestantes = (porcentajeReciente.times(diffInDays.toFloat()) / porcentajeConsumido).takeIf { it.isFinite() } ?: 0f
-        }
-
-        return diasRestantes
-        /*for (i in 0 until finalLecturas.size - 1) {
+        for (i in 0 until finalLecturas.size - 1) {
             val lectura1 = finalLecturas[i]
             val lectura2 = finalLecturas[i + 1]
 
-            val date1 = lectura1.fechaLectura?.let { format.parse(it) }
-            val date2 = lectura2.fechaLectura?.let { format.parse(it) }
+            val porcentajeGas1 = lectura1.porcentajeGas?.toFloatOrNull()
+            val porcentajeGas2 = lectura2.porcentajeGas?.toFloatOrNull()
 
-            if (date1 != null && date2 != null) {
-                val diffInMilliseconds = date1.time - date2.time
-                val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMilliseconds)
-
-                if (diffInDays != 0L) {
-                    val changeRate = (lectura2.porcentajeGas!!.toFloat() - lectura1.porcentajeGas!!.toFloat()) / diffInDays
-                    changeRates.add(changeRate)
-                }
+            if (porcentajeGas1 != null && porcentajeGas2 != null) {
+                val changeRate = Math.abs(porcentajeGas2 - porcentajeGas1)
+                changeRates.add(changeRate)
             }
-        }*/
+        }
+
+        val averageChangeRate = changeRates.average().toFloat()
+        val currentGasPercentage = finalLecturas.last().porcentajeGas?.toFloatOrNull() ?: 0f
+
+        val remainingDays = currentGasPercentage / averageChangeRate
+
+        return remainingDays
     }
 
     private fun sendNotification(sensor: Sensor, gasPercentage: Int) {
