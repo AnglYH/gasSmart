@@ -60,7 +60,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
     // Declarar la variable en el alcance de la clase
     private var distributorPhone: String? = null
     private var distribuidorId: String? = null
-
+    private var brandId: Long? = null
     private lateinit var sensorViewModel: SensorViewModel
 
     private var _binding: FragmentStoreBinding? = null
@@ -183,7 +183,6 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
 
         lifecycleScope.launch {
             val distributorsFromDb = repository.getAllDistributors()
-            val marcasFromDb = distributorsFromDb.mapNotNull { it.marca?.mapNotNull { it.nombre } }.flatten()
             val distributorNames = distributorsFromDb.map { it.name }
 
             // Configurar el ArrayAdapter para el AutoCompleteTextView
@@ -229,10 +228,10 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                     val selectedBrand = selectedDistributor.marca?.filterNotNull()?.get(brandPosition)
 
                     // Obtener el id de la marca
-                    val brandId = selectedBrand?.id
+                    brandId = selectedBrand!!.marca_id
 
                     // Recuperar los tipos de válvulas asociados a la marca seleccionada
-                    val valves = selectedBrand?.valvula?.keys?.toList() ?: emptyList()
+                    val valves = selectedBrand.valvula?.keys?.toList() ?: emptyList()
 
                     // Configurar el ArrayAdapter para el AutoCompleteTextView de los tipos de válvulas
                     val valveAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList(valves))
@@ -255,7 +254,7 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                         Log.d("StoreFragment", "Tipo de válvula seleccionado: $selectedValveType")
 
                         // Recuperar los datos de la válvula seleccionada
-                        val selectedValveData = selectedBrand?.valvula?.get(selectedValveType) as? ValveType
+                        val selectedValveData = selectedBrand.valvula?.get(selectedValveType) as? ValveType
 
                         // Recuperar el peso asociado al tipo de válvula seleccionado
                         val weight = selectedValveData?.peso
@@ -319,12 +318,12 @@ class StoreFragment : Fragment(), OnMapReadyCallback {
                         Log.d("StoreFragment", "Dirección: $direccion")
                         //Log.d("StoreFragment", "ID del distribuidor: $distributor_Id")
                         Log.d("StoreFragment", "ID de la compra: $id")
-                        Log.d("StoreFragment", "ID de la marca: $marca_id")
+                        //Log.d("StoreFragment", "ID de la marca: $marca_id")
                         Log.d("StoreFragment", "Peso del balón: $peso_balon")
                         Log.d("StoreFragment", "Precio: $price")
                         Log.d("StoreFragment", "ID de la válvula: $valvula_balon")
 
-                        val purchase = Purchase(date, direccion, distribuidorId.toString(), id, marca_id, peso_balon, price, sensor_id, user_id, valvula_balon)
+                        val purchase = Purchase(date, direccion, distribuidorId.toString(), id, brandId.toString(), peso_balon, price, sensor_id, user_id, valvula_balon)
 
                         val database = FirebaseDatabase.getInstance()
                         val reference = database.getReference("compras")
