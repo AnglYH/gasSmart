@@ -31,6 +31,7 @@ class MqttHelper {
 
         try {
             if (!mqttClient.isConnected) {
+                Log.d("MqttHelper", mqttClient.clientId)
                 Log.d("MqttHelper", "Intentando conectar al broker MQTT")
                 mqttClient.connect(mqttConnectOptions)
                 if (mqttClient.isConnected) {
@@ -51,9 +52,13 @@ class MqttHelper {
     }
 
     fun publishMessage(topic: String, switchState: Boolean) {
-        if (!isConnected) {
+        if (!mqttClient.isConnected) {
             Log.d("MqttHelper", "Intento de publicar mensaje con conexión MQTT no establecida")
-            return
+            connect()
+            if (!mqttClient.isConnected) {
+                Log.e("MqttHelper", "No se pudo restablecer la conexión MQTT")
+                return
+            }
         }
 
         try {
