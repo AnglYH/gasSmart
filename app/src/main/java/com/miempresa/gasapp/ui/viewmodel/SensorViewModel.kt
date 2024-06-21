@@ -103,6 +103,11 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
             val porcentajeGas1 = lectura1.porcentajeGas?.toFloatOrNull()
             val porcentajeGas2 = lectura2.porcentajeGas?.toFloatOrNull()
 
+            if (porcentajeGas1 != null && porcentajeGas2 != null && porcentajeGas2 == porcentajeGas1) {
+                filteredLecturas.add(lectura1)
+                break
+            }
+
             if (porcentajeGas1 != null && porcentajeGas2 != null && porcentajeGas2 < porcentajeGas1) {
                 filteredLecturas.add(lectura1)
                 break
@@ -113,8 +118,14 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
 
         val finalLecturas = filteredLecturas.sortedBy { it.fechaLectura }
 
-        if (finalLecturas.size == 1 && finalLecturas[0].porcentajeGas == "100") {
+        /*if (finalLecturas.size == 1 && finalLecturas[0].porcentajeGas == "100") {
             return 30f
+        }*/
+        if (finalLecturas.size == 1) {
+            val porcentajeGas = finalLecturas[0].porcentajeGas?.toFloatOrNull()
+            if (porcentajeGas != null) {
+                return (porcentajeGas / 100) * 30
+            }
         }
 
         val changeRates = mutableListOf<Float>()
@@ -143,8 +154,8 @@ class SensorViewModel(application: Application, private val sensorRepository: Se
     private fun sendNotification(sensor: Sensor, gasPercentage: Int) {
         val currentTime = System.currentTimeMillis()
         val lastNotificationTime = getLastNotificationTime(sensor.id)
-        //if (currentTime - lastNotificationTime < 10 * 1000) return
-        if (currentTime - lastNotificationTime < 60 * 60 * 1000) return
+        if (currentTime - lastNotificationTime < 120 * 1000) return
+        //if (currentTime - lastNotificationTime < 60 * 60 * 1000) return
 
         val context = getApplication<Application>().applicationContext
         val notificationManager = ContextCompat.getSystemService(
