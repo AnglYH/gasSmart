@@ -3,6 +3,7 @@ package com.miempresa.gasapp.network
 import android.util.Log
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import java.util.UUID
 
 
 class MqttHelper {
@@ -11,7 +12,7 @@ class MqttHelper {
 
     init {
         val serverUri = "wss://mqtt.flespi.io:443"
-        val clientId = "mqtt-board-panel-570d746u"
+        val clientId = UUID.randomUUID().toString()
         mqttClient = MqttClient(serverUri, clientId, MemoryPersistence())
         connect()
     }
