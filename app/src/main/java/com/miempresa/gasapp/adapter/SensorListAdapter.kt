@@ -71,6 +71,7 @@ class SensorListAdapter(
                             R.color.silver
                         )
                     )
+                    holder.binding.switchSensor.visibility = View.GONE
                     holder.binding.tvPercentage.text = ""
                     holder.binding.tvRemainingDays.text = ""
                     holder.binding.tvDate.text = ""
