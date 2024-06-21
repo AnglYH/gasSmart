@@ -88,4 +88,7 @@ dependencies {
     implementation(libs.firebase.ui.auth)
 
     implementation(libs.material.v140)
+
+    // Mqtt
+    implementation (libs.org.eclipse.paho.client.mqttv3)
 }
