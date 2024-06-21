@@ -18,6 +18,7 @@ import com.miempresa.gasapp.R
 import com.miempresa.gasapp.data.SensorRepository
 import com.miempresa.gasapp.model.Lectura
 import com.miempresa.gasapp.model.Sensor
+import com.miempresa.gasapp.network.MqttHelper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -28,6 +29,12 @@ import java.util.concurrent.TimeUnit
 class SensorViewModel(application: Application, private val sensorRepository: SensorRepository) : AndroidViewModel(application) {
     private val _sensorData = MutableLiveData<Pair<Sensor?, Lectura?>>()
     val sensorData: LiveData<Pair<Sensor?, Lectura?>> get() = _sensorData
+
+    val mqttHelper = MqttHelper()
+
+    init {
+        mqttHelper.connect()
+    }
 
     private fun loadSensorData(idSensor: String) {
         viewModelScope.launch {
