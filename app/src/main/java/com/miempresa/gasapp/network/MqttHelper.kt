@@ -12,7 +12,7 @@ class MqttHelper {
 
     init {
         val serverUri = "wss://mqtt.flespi.io:443"
-        val clientId = UUID.randomUUID().toString()
+        val clientId = "Angel"
         mqttClient = MqttClient(serverUri, clientId, MemoryPersistence())
         connect()
     }

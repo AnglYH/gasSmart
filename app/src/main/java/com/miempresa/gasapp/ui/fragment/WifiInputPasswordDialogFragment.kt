@@ -22,8 +22,6 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.miempresa.gasapp.MainActivity
 import com.miempresa.gasapp.R
-import com.miempresa.gasapp.network.ApiClient
-import com.miempresa.gasapp.network.ApiService
 import com.miempresa.gasapp.ui.activity.SensorWifiActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -42,9 +40,6 @@ import java.io.IOException
 
 @Suppress("DEPRECATION")
 class WifiInputPasswordDialogFragment : DialogFragment() {
-    private val apiService: ApiService by lazy {
-        ApiClient.getClient().create(ApiService::class.java)
-    }
 
     // Define una variable para el modo de prueba
     private val isTestMode = false
